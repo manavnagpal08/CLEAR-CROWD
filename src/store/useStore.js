@@ -91,7 +91,7 @@ export const useStore = create(
           uid: user.uid,
           email: user.email,
           name: user.displayName || user.email.split('@')[0],
-          role: 'user',
+          role: user.email === 'admin@screenerpro.com' ? 'admin' : 'user',
           createdAt: new Date().toISOString()
         };
 
@@ -119,7 +119,7 @@ export const useStore = create(
             uid: userCredential.user.uid,
             name,
             email,
-            role: 'user',
+            role: email === 'admin@screenerpro.com' ? 'admin' : 'user',
             createdAt: new Date().toISOString()
           };
           
@@ -148,7 +148,7 @@ export const useStore = create(
               uid: user.uid,
               email: user.email,
               name: user.displayName || user.email.split('@')[0],
-              role: 'user'
+              role: user.email === 'admin@screenerpro.com' ? 'admin' : 'user'
             };
 
             try {
@@ -165,6 +165,24 @@ export const useStore = create(
             set({ user: null, isAuthenticated: false });
           }
         });
+      },
+
+      updateProfile: async (updates) => {
+        const user = get().user;
+        if (!user) return;
+        
+        set({ isLoading: true });
+        try {
+          const newUserData = { ...user, ...updates };
+          await setDoc(doc(db, 'users', user.uid), newUserData, { merge: true });
+          set({ user: newUserData });
+          return true;
+        } catch (error) {
+          console.error("Update profile error:", error);
+          throw error;
+        } finally {
+          set({ isLoading: false });
+        }
       },
 
       updateUserLocation: () => {

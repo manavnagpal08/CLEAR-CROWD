@@ -127,7 +127,7 @@ function App() {
                       <CrowdMap />
                     </motion.div>
                   )}
-                  {activeTab === 'admin' && (
+                  {activeTab === 'admin' && user?.role === 'admin' && (
                     <motion.div
                       key="admin-view"
                       initial={{ opacity: 0, x: 50 }}

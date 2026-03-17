@@ -58,7 +58,9 @@ export const Header = () => {
           className="hidden lg:flex glass-panel rounded-[2.5rem] p-2 gap-2 pointer-events-auto border-white/10 shadow-[0_30px_70px_rgba(0,0,0,0.6)] border-t-white/20"
         >
           <NavButton active={activeTab === 'map'} onClick={() => setActiveTab('map')} icon={<MapIcon size={18} />} label="Satellite" />
-          <NavButton active={activeTab === 'admin'} onClick={() => setActiveTab('admin')} icon={<LayoutDashboard size={18} />} label="Tactical" />
+          {user?.role === 'admin' && (
+            <NavButton active={activeTab === 'admin'} onClick={() => setActiveTab('admin')} icon={<LayoutDashboard size={18} />} label="Tactical" />
+          )}
           <NavButton active={activeTab === 'alerts'} onClick={() => setActiveTab('alerts')} icon={<Bell size={18} />} label="Notifications" />
         </motion.nav>
 
@@ -195,7 +197,7 @@ export const Header = () => {
           >
             {[
               { id: 'map', label: 'Tactical Map', icon: <MapIcon /> },
-              { id: 'admin', label: 'City Intel', icon: <LayoutDashboard /> },
+              ...(user?.role === 'admin' ? [{ id: 'admin', label: 'City Intel', icon: <LayoutDashboard /> }] : []),
               { id: 'alerts', label: 'Active Alerts', icon: <Bell /> }
             ].map((item) => (
               <button 
