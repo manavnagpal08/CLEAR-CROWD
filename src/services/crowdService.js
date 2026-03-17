@@ -6,23 +6,54 @@ const BASE_RADIUS = 0.015; // Approx 1.5km radius for city points
  * to simulate real-world data points for the dashboard.
  */
 export const generatePointsAround = (lat, lng) => {
-  const points = [
-    { id: '1', name: 'Main Station', offset: { lat: 0.005, lng: -0.008 } },
-    { id: '2', name: 'Central Park', offset: { lat: 0.008, lng: 0.012 } },
-    { id: '3', name: 'City Mall', offset: { lat: -0.012, lng: 0.005 } },
-    { id: '4', name: 'Tech Park', offset: { lat: -0.008, lng: -0.015 } },
-    { id: '5', name: 'University', offset: { lat: 0.015, lng: -0.005 } },
-    { id: '6', name: 'Business Square', offset: { lat: -0.005, lng: 0.008 } },
+  const basePoints = [
+    { name: 'Central Station', latOffset: 0.005, lngOffset: -0.008 },
+    { name: 'Skyline Mall', latOffset: 0.008, lngOffset: 0.012 },
+    { name: 'Silicon Tech Park', latOffset: -0.012, lngOffset: 0.005 },
+    { name: 'Memorial Park', latOffset: -0.008, lngOffset: -0.015 },
+    { name: 'City University', latOffset: 0.015, lngOffset: -0.005 },
+    { name: 'Financial District', latOffset: -0.005, lngOffset: 0.008 },
   ];
 
-  return points.map(p => ({
-    ...p,
-    lat: lat + p.offset.lat,
-    lng: lng + p.offset.lng,
-    density: 20 + Math.random() * 70, // Simulated real-time load
-    trend: Math.random() > 0.5 ? 'up' : 'down',
-    lastUpdate: new Date().toISOString()
-  }));
+  const generatedPoints = [];
+  
+  // Add the 6 base landmarks
+  basePoints.forEach((p, idx) => {
+    generatedPoints.push({
+      id: `base-${idx}`,
+      name: p.name,
+      lat: lat + p.latOffset,
+      lng: lng + p.lngOffset,
+      density: 30 + Math.random() * 60,
+      trend: Math.random() > 0.5 ? 'up' : 'down',
+      lastUpdate: new Date().toISOString()
+    });
+  });
+
+  // Generate 50 more tactical nodes
+  const sectors = ['North', 'South', 'East', 'West', 'Central', 'Urban', 'Industrial', 'Green'];
+  const sites = ['Hub', 'Plaza', 'Crossing', 'Avenue', 'Way', 'Junction', 'Point', 'Zone'];
+
+  for (let i = 0; i < 50; i++) {
+    const sector = sectors[Math.floor(Math.random() * sectors.length)];
+    const site = sites[Math.floor(Math.random() * sites.length)];
+    
+    // Spread points within a ~4km radius
+    const latOff = (Math.random() - 0.5) * 0.06;
+    const lngOff = (Math.random() - 0.5) * 0.06;
+
+    generatedPoints.push({
+      id: `node-${i}`,
+      name: `${sector} ${site} ${i + 101}`,
+      lat: lat + latOff,
+      lng: lng + lngOff,
+      density: 10 + Math.random() * 85,
+      trend: Math.random() > 0.5 ? 'up' : 'down',
+      lastUpdate: new Date().toISOString()
+    });
+  }
+
+  return generatedPoints;
 };
 
 class CrowdService {

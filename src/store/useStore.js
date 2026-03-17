@@ -39,9 +39,42 @@ export const useStore = create(
       lastReportTimestamp: null,
 
       // Smart City Real-time Features
-      notifications: [], // { id, title, type: 'info' | 'warning' | 'critical', message, read, timestamp }
+      notifications: [
+        { 
+          id: 'pre-1', 
+          title: 'Heavy Traffic: Silk Board Crossing', 
+          type: 'warning', 
+          message: 'Unusual traffic congestion detected towards the main arterial road. Estimated delay: 15 mins.', 
+          read: false, 
+          timestamp: new Date(Date.now() - 3600000).toISOString() 
+        },
+        { 
+          id: 'pre-2', 
+          title: 'Public Gathering: Central Plaza', 
+          type: 'info', 
+          message: 'A planned gathering is increasing density in Sector 4. High load expected until 20:00.', 
+          read: true, 
+          timestamp: new Date(Date.now() - 7200000).toISOString() 
+        },
+        { 
+          id: 'pre-3', 
+          title: 'Safety Node Connectivity: HIGH', 
+          type: 'info', 
+          message: 'Urban infrastructure nodes are operating at 99.8% stability across all zones.', 
+          read: true, 
+          timestamp: new Date(Date.now() - 14400000).toISOString() 
+        },
+        { 
+          id: 'pre-4', 
+          title: 'Grid Anomaly: MG Road', 
+          type: 'critical', 
+          message: 'Sudden 40% surge in pedestrian density detected near the Metro entry. Deploying crowd controllers.', 
+          read: false, 
+          timestamp: new Date(Date.now() - 1800000).toISOString() 
+        }
+      ], 
       anomalies: [], // { id, locationId, name, severity, timestamp }
-      unreadNotifications: 0,
+      unreadNotifications: 2,
       
       // Environmental Factors
       events: [

@@ -55,13 +55,33 @@ export const Header = () => {
           initial={{ opacity: 0, scale: 0.9, y: -20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ type: "spring", damping: 25, delay: 0.2 }}
-          className="hidden lg:flex glass-panel rounded-[2.5rem] p-2 gap-2 pointer-events-auto border-white/10 shadow-[0_30px_70px_rgba(0,0,0,0.6)] border-t-white/20"
+          className="hidden lg:flex items-center glass-panel rounded-[2.5rem] p-2 gap-2 pointer-events-auto border-white/10 shadow-[0_30px_70px_rgba(0,0,0,0.6)] border-t-white/20"
         >
           <NavButton active={activeTab === 'map'} onClick={() => setActiveTab('map')} icon={<MapIcon size={18} />} label="Satellite" />
           {user?.role === 'admin' && (
             <NavButton active={activeTab === 'admin'} onClick={() => setActiveTab('admin')} icon={<LayoutDashboard size={18} />} label="Tactical" />
           )}
           <NavButton active={activeTab === 'alerts'} onClick={() => setActiveTab('alerts')} icon={<Bell size={18} />} label="Notifications" />
+          
+          <div className="h-8 w-px bg-white/10 mx-2" />
+          
+          <div className="flex gap-4 px-4 py-1">
+             <div className="flex flex-col items-center group cursor-help" title="Overall City Safety Index">
+                <span className="text-[7px] font-black text-white/40 uppercase tracking-widest">Safety Index</span>
+                <div className="flex items-center gap-1.5">
+                   <div className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse" />
+                   <span className="text-xs font-black text-secondary">98.2%</span>
+                </div>
+             </div>
+             
+             <div className="flex flex-col items-center group cursor-help" title="IoT Infrastructure Health">
+                <span className="text-[7px] font-black text-white/40 uppercase tracking-widest">Network</span>
+                <div className="flex items-center gap-1.5">
+                   <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                   <span className="text-xs font-black text-primary">Stable</span>
+                </div>
+             </div>
+          </div>
         </motion.nav>
 
         {/* User Stats - Right Wing */}

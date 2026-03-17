@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bell, AlertTriangle, ShieldCheck, Info, MessageSquare, ArrowUpRight } from 'lucide-react';
 import { Badge, Button } from '../ui';
+import { useStore } from '../../store/useStore';
 
 export const AlertsView = () => {
   const { notifications, markNotificationsRead } = useStore();
