@@ -8,6 +8,7 @@ import { CommunityFeed } from '../Community/CommunityFeed';
 import { CrowdAssistant } from '../Community/CrowdAssistant';
 import { MessageSquare, MousePointer2, Clock, Map as MapIcon, Navigation, HelpCircle, Bot, Zap } from 'lucide-react';
 import { ReportCrowdButton } from './ReportCrowdButton';
+import { UserInsightsPanel } from '../../features/userInsights';
 import L from 'leaflet';
 
 // Fix Leaflet marker icon issue
@@ -310,7 +311,7 @@ export const CrowdMap = () => {
             exit={{ opacity: 0, x: -20 }}
             className="hidden lg:block absolute left-12 top-1/2 -translate-y-1/2 z-[1000]"
           >
-            <div className="w-[360px] glass-panel p-8 rounded-[3rem] border-primary/20 relative shadow-[0_0_50px_rgba(0,194,255,0.1)] backdrop-blur-3xl bg-[#0A0F19]/80">
+            <div className="w-[400px] max-h-[85vh] overflow-y-auto custom-scrollbar glass-panel p-8 rounded-[3rem] border-primary/20 relative shadow-[0_0_50px_rgba(0,194,255,0.1)] backdrop-blur-3xl bg-[#0A0F19]/80">
               <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-[50px] -z-10 rounded-full" />
               
               <div className="flex justify-between items-start mb-6">
@@ -377,6 +378,9 @@ export const CrowdMap = () => {
                      Establish Route <MapIcon size={16} className="text-white/40 group-hover:text-white transition-colors group-hover:scale-110" />
                   </button>
                 </div>
+
+                {/* New Feature: User Insights Panel with Tabs */}
+                <UserInsightsPanel />
               </div>
             </div>
           </motion.div>
