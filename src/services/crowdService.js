@@ -6,26 +6,39 @@ const BASE_RADIUS = 0.015; // Approx 1.5km radius for city points
  * to simulate real-world data points for the dashboard.
  */
 const REAL_LANDMARKS = [
-  { name: 'Silk Board Junction', lat: 12.9177, lng: 77.6238, type: 'traffic', peakHours: [9, 11, 17, 21] },
-  { name: 'Majestic (Kempe Gowda)', lat: 12.9767, lng: 77.5713, type: 'metro', peakHours: [8, 10, 18, 20] },
-  { name: 'MG Road Metro', lat: 12.9750, lng: 77.6050, type: 'metro', peakHours: [9, 11, 18, 22] },
-  { name: 'Commercial Street', lat: 12.9822, lng: 77.6083, type: 'shopping', peakHours: [11, 21] },
-  { name: 'Brigade Road', lat: 12.9740, lng: 77.6074, type: 'shopping', peakHours: [12, 23] },
-  { name: 'Cubbon Park', lat: 12.9738, lng: 77.5906, type: 'park', peakHours: [6, 9, 16, 19] },
-  { name: 'Lalbagh Botanical Garden', lat: 12.9507, lng: 77.5847, type: 'park', peakHours: [6, 9, 16, 19] },
-  { name: 'Electronic City Phase 1', lat: 12.8450, lng: 77.6633, type: 'traffic', peakHours: [8, 10, 17, 19] },
-  { name: 'Manyata Tech Park', lat: 13.0451, lng: 77.6266, type: 'traffic', peakHours: [9, 11, 17, 20] },
-  { name: 'Phoenix Marketcity', lat: 12.9958, lng: 77.6963, type: 'shopping', peakHours: [11, 22] },
-  { name: 'KR Puram Bridge', lat: 13.0163, lng: 77.7045, type: 'traffic', peakHours: [8, 11, 17, 21] },
-  { name: 'Hebbal Flyover', lat: 13.0358, lng: 77.5971, type: 'traffic', peakHours: [8, 11, 17, 21] },
-  { name: 'ISKCON Temple', lat: 13.0098, lng: 77.5511, type: 'tourist', peakHours: [10, 13, 16, 20] },
-  { name: 'Vidhyarthi Bhavan', lat: 12.9450, lng: 77.5714, type: 'food', peakHours: [7, 11, 16, 20] },
-  { name: 'Marathahalli Junction', lat: 12.9562, lng: 77.7019, type: 'traffic', peakHours: [9, 11, 17, 21] },
-  { name: 'Indiranagar 100ft Road', lat: 12.9622, lng: 77.6381, type: 'shopping', peakHours: [12, 23] },
-  { name: 'Koramangala 5th Block', lat: 12.9352, lng: 77.6245, type: 'food', peakHours: [12, 15, 19, 23] },
-  { name: 'Whitefield ITPL', lat: 12.9866, lng: 77.7323, type: 'traffic', peakHours: [9, 11, 17, 20] },
-  { name: 'Bannerghatta Meenakshi Mall', lat: 12.8757, lng: 77.5955, type: 'shopping', peakHours: [11, 21] },
-  { name: 'Jayanagar 4th Block', lat: 12.9284, lng: 77.5833, type: 'shopping', peakHours: [10, 20] },
+  // --- BANGALORE ---
+  { name: 'Silk Board Junction', lat: 12.9177, lng: 77.6238, type: 'traffic' },
+  { name: 'Majestic (Kempe Gowda)', lat: 12.9767, lng: 77.5713, type: 'metro' },
+  { name: 'MG Road Metro', lat: 12.9750, lng: 77.6050, type: 'metro' },
+  { name: 'Commercial Street', lat: 12.9822, lng: 77.6083, type: 'shopping' },
+  { name: 'Brigade Road', lat: 12.9740, lng: 77.6074, type: 'shopping' },
+  { name: 'Cubbon Park', lat: 12.9738, lng: 77.5906, type: 'park' },
+  { name: 'Lalbagh Garden', lat: 12.9507, lng: 77.5847, type: 'park' },
+  { name: 'Electronic City Phase 1', lat: 12.8450, lng: 77.6633, type: 'traffic' },
+  
+  // --- DELHI ---
+  { name: 'Chandni Chowk', lat: 28.6506, lng: 77.2300, type: 'shopping' },
+  { name: 'Connaught Place', lat: 28.6327, lng: 77.2197, type: 'shopping' },
+  { name: 'India Gate', lat: 28.6129, lng: 77.2295, type: 'tourist' },
+  { name: 'Sarojini Nagar Market', lat: 28.5750, lng: 77.1990, type: 'shopping' },
+  { name: 'Rajiv Chowk Metro', lat: 28.6328, lng: 77.2195, type: 'metro' },
+  { name: 'Dhaula Kuan Junction', lat: 28.5919, lng: 77.1616, type: 'traffic' },
+  { name: 'Hauz Khas Village', lat: 28.5480, lng: 77.1930, type: 'food' },
+  { name: 'Qutub Minar', lat: 28.5244, lng: 77.1855, type: 'tourist' },
+  { name: 'ITO Crossing', lat: 28.6284, lng: 77.2407, type: 'traffic' },
+  { name: 'Akshardham Temple', lat: 28.6127, lng: 77.2773, type: 'tourist' },
+
+  // --- PUNE ---
+  { name: 'Laxmi Road', lat: 18.5175, lng: 73.8580, type: 'shopping' },
+  { name: 'FC Road', lat: 18.5204, lng: 73.8407, type: 'food' },
+  { name: 'Koregaon Park', lat: 18.5363, lng: 73.8906, type: 'food' },
+  { name: 'Janwadi (Senapati Bapat Rd)', lat: 18.5323, lng: 73.8306, type: 'traffic' },
+  { name: 'Swargate Junction', lat: 18.4988, lng: 73.8576, type: 'traffic' },
+  { name: 'Dagadusheth Temple', lat: 18.5186, lng: 73.8567, type: 'tourist' },
+  { name: 'Pune Station', lat: 18.5289, lng: 73.8744, type: 'metro' },
+  { name: 'Viman Nagar (Phoenix)', lat: 18.5622, lng: 73.9167, type: 'shopping' },
+  { name: 'Hinjewadi IT Park Ph1', lat: 18.5907, lng: 73.7371, type: 'traffic' },
+  { name: 'Magarpatta City', lat: 18.5144, lng: 73.9262, type: 'traffic' },
 ];
 
 const calculateDensityForType = (type, hour) => {
