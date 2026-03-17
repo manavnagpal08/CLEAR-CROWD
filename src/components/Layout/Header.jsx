@@ -1,13 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Map as MapIcon, LayoutDashboard, Bell, LogOut, Settings, User } from 'lucide-react';
+import { Shield, Map as MapIcon, LayoutDashboard, Bell, LogOut, Settings, User, AlertTriangle, Info, CheckCircle2 } from 'lucide-react';
 import { useStore } from '../../store/useStore';
 import { Button, Badge } from '../ui';
+import { toast } from 'sonner';
 
 export const Header = () => {
-  const { activeTab, setActiveTab, logout, user, userPoints, getUserBadge } = useStore();
+  const { activeTab, setActiveTab, logout, user, userPoints, getUserBadge, notifications, unreadNotifications, markNotificationsRead } = useStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showNotifDropdown, setShowNotifDropdown] = useState(false);
   const badge = getUserBadge();
+
+  // Watch for new unread notifications and show toast
+  useEffect(() => {
+    if (unreadNotifications > 0 && notifications?.length > 0) {
+      const latest = notifications[0];
+      if (!latest.read) {
+        if (latest.type === 'critical') toast.error(latest.title, { description: latest.message });
+        else if (latest.type === 'warning') toast.warning(latest.title, { description: latest.message });
+        else toast.info(latest.title, { description: latest.message });
+      }
+    }
+  }, [unreadNotifications, notifications]);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-[100] px-4 md:px-12 py-6 pointer-events-none">
@@ -72,6 +86,60 @@ export const Header = () => {
                    </motion.span>
                 </span>
              </div>
+          </div>
+
+          <div 
+            className="hidden xl:flex flex-col items-end cursor-pointer group/user relative"
+            onClick={() => setShowNotifDropdown(!showNotifDropdown)}
+          >
+             <div className="relative">
+                <Bell size={20} className="text-white/40 group-hover/user:text-white transition-colors" />
+                {unreadNotifications > 0 && (
+                   <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border border-[#04060A]"></span>
+                   </span>
+                )}
+             </div>
+
+             {/* Notifications Dropdown */}
+             <AnimatePresence>
+                {showNotifDropdown && (
+                   <motion.div 
+                     initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                     animate={{ opacity: 1, y: 0, scale: 1 }}
+                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                     className="absolute top-12 right-0 w-80 glass-panel rounded-3xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] overflow-hidden z-[100]"
+                   >
+                     <div className="p-4 border-b border-white/5 flex justify-between items-center bg-white/[0.02]">
+                        <h4 className="text-xs font-black uppercase tracking-widest text-white/50">Intel Alerts</h4>
+                        {unreadNotifications > 0 && (
+                           <button onClick={(e) => { e.stopPropagation(); markNotificationsRead(); }} className="text-[9px] text-primary hover:text-white uppercase font-bold">Mark Read</button>
+                        )}
+                     </div>
+                     <div className="max-h-64 overflow-y-auto custom-scrollbar p-2 flex flex-col gap-1">
+                        {notifications?.length === 0 ? (
+                           <p className="text-xs text-center text-white/30 py-4 font-medium italic">No new signals detected.</p>
+                        ) : (
+                           notifications?.slice(0, 10).map(n => (
+                              <div key={n.id} className={`p-3 rounded-2xl flex gap-3 transition-colors ${n.read ? 'opacity-50 hover:opacity-100 bg-transparent' : 'bg-white/5 border border-white/5'}`}>
+                                 <div className="shrink-0 mt-0.5">
+                                    {n.type === 'critical' ? <AlertTriangle size={14} className="text-red-500" /> :
+                                     n.type === 'warning' ? <AlertTriangle size={14} className="text-yellow-500" /> :
+                                     <Info size={14} className="text-primary" />}
+                                 </div>
+                                 <div>
+                                    <p className={`text-xs font-bold leading-tight ${n.read ? 'text-white/60' : 'text-white'}`}>{n.title}</p>
+                                    <p className="text-[10px] text-white/40 mt-1 font-medium">{n.message}</p>
+                                    <p className="text-[8px] text-white/20 mt-2 tracking-widest uppercase">{new Date(n.timestamp).toLocaleTimeString()}</p>
+                                 </div>
+                              </div>
+                           ))
+                        )}
+                     </div>
+                   </motion.div>
+                )}
+             </AnimatePresence>
           </div>
 
           <div 

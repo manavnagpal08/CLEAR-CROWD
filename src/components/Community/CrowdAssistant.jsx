@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
+import 'regenerator-runtime/runtime';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bot, Send, X, MessageSquare, Sparkles, ChevronRight, User, Loader2 } from 'lucide-react';
+import { Bot, Send, X, MessageSquare, Sparkles, ChevronRight, User, Loader2, Mic, MicOff } from 'lucide-react';
 import { useStore } from '../../store/useStore';
 import { getAIResponse } from '../../services/aiService';
 import { Button } from '../ui';
 import { toast } from 'sonner';
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 
 export const CrowdAssistant = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,7 +16,8 @@ export const CrowdAssistant = () => {
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
-  const { crowdData } = useStore();
+  const { crowdData, anomalies, communityReports } = useStore();
+  const { transcript, listening, resetTranscript, browserSupportsSpeechRecognition } = useSpeechRecognition();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -24,17 +27,38 @@ export const CrowdAssistant = () => {
     if (isOpen) scrollToBottom();
   }, [messages, isOpen]);
 
+  useEffect(() => {
+    if (transcript) {
+      setInputValue(transcript);
+    }
+  }, [transcript]);
+
+  const toggleListening = () => {
+    if (listening) {
+      SpeechRecognition.stopListening();
+    } else {
+      resetTranscript();
+      SpeechRecognition.startListening({ continuous: true, language: 'en-US' });
+      toast.info("Listening...", { duration: 2000 });
+    }
+  };
+
   const handleSend = async (e) => {
-    e.preventDefault();
+    e?.preventDefault();
     if (!inputValue.trim() || loading) return;
+
+    if (listening) {
+       SpeechRecognition.stopListening();
+    }
 
     const userMsg = { id: Date.now(), type: 'user', text: inputValue };
     setMessages(prev => [...prev, userMsg]);
     setInputValue('');
+    resetTranscript();
     setLoading(true);
 
     try {
-      const aiResponse = await getAIResponse(inputValue, crowdData);
+      const aiResponse = await getAIResponse(inputValue, crowdData, anomalies, communityReports);
       const botMsg = { id: Date.now() + 1, type: 'bot', text: aiResponse };
       setMessages(prev => [...prev, botMsg]);
     } catch (error) {
@@ -145,17 +169,33 @@ export const CrowdAssistant = () => {
                   <input
                     type="text"
                     placeholder="Ask me about city crowds..."
-                    className="w-full bg-white/[0.03] border border-white/10 rounded-3xl px-6 py-4 pr-16 text-sm text-white focus:border-primary/40 focus:ring-1 focus:ring-primary/20 outline-none transition-all placeholder:text-white/20 font-medium"
+                    className="w-full bg-white/[0.03] border border-white/10 rounded-3xl px-6 py-4 pr-32 text-sm text-white focus:border-primary/40 focus:ring-1 focus:ring-primary/20 outline-none transition-all placeholder:text-white/20 font-medium"
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                   />
-                  <button 
-                    type="submit"
-                    disabled={!inputValue.trim() || loading}
-                    className="absolute right-2 w-12 h-12 bg-primary rounded-[1.2rem] flex items-center justify-center text-slate-950 hover:scale-105 active:scale-95 disabled:opacity-30 transition-all font-black shadow-lg shadow-primary/20"
-                  >
-                     <Send size={18} />
-                  </button>
+                  
+                  <div className="absolute right-2 flex items-center gap-2">
+                     {browserSupportsSpeechRecognition && (
+                        <button
+                          type="button"
+                          onClick={toggleListening}
+                          className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${
+                             listening 
+                              ? 'bg-red-500/20 text-red-500 border border-red-500/50 animate-pulse' 
+                              : 'bg-white/5 text-white/40 hover:text-white hover:bg-white/10'
+                          }`}
+                        >
+                           {listening ? <Mic size={16} /> : <MicOff size={16} />}
+                        </button>
+                     )}
+                     <button 
+                       type="submit"
+                       disabled={!inputValue.trim() || loading}
+                       className="w-12 h-12 bg-primary rounded-[1.2rem] flex items-center justify-center text-slate-950 hover:scale-105 active:scale-95 disabled:opacity-30 transition-all font-black shadow-lg shadow-primary/20"
+                     >
+                        <Send size={18} />
+                     </button>
+                  </div>
                </form>
             </div>
           </motion.div>

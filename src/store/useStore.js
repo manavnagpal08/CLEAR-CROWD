@@ -37,6 +37,11 @@ export const useStore = create(
       userPoints: 0,
       reportsHistory: [],
       lastReportTimestamp: null,
+
+      // Smart City Real-time Features
+      notifications: [], // { id, title, type: 'info' | 'warning' | 'critical', message, read, timestamp }
+      anomalies: [], // { id, locationId, name, severity, timestamp }
+      unreadNotifications: 0,
       
       // Environmental Factors
       events: [
@@ -180,6 +185,32 @@ export const useStore = create(
         try {
           const { lat, lng } = get().userLocation;
           const data = await getCrowdData(lat, lng);
+          
+          // Anomaly Detection Algorithm (Simulated)
+          const state = get();
+          const prevData = state.crowdData;
+          if (prevData && prevData.length > 0 && !get().isLoading) {
+             data.forEach(newLoc => {
+                const oldLoc = prevData.find(l => l.id === newLoc.id);
+                if (oldLoc) {
+                   // Detect sudden spike (e.g., > 20% density increase instantly)
+                   const spike = newLoc.density - oldLoc.density;
+                   if (spike > 20) {
+                      const severity = newLoc.density > 75 ? 'high' : 'medium';
+                      // Avoid duplicate anomaly for same location within 5 mins
+                      const recentAnomaly = state.anomalies.find(a => 
+                         a.locationId === newLoc.id && 
+                         new Date(a.timestamp).getTime() > Date.now() - 5 * 60000
+                      );
+                      
+                      if (!recentAnomaly) {
+                         state.addAnomaly({ locationId: newLoc.id, name: newLoc.name, severity });
+                      }
+                   }
+                }
+             });
+          }
+
           set({ crowdData: data });
         } finally {
           set({ isLoading: false });
@@ -292,6 +323,67 @@ export const useStore = create(
         if (points >= 500) return { label: 'Top Reporter', color: 'text-primary' };
         if (points >= 200) return { label: 'Contributor', color: 'text-secondary' };
         return { label: 'Beginner', color: 'text-white/40' };
+      },
+
+      addNotification: (notification) => {
+        const newNotif = {
+          ...notification,
+          id: Date.now() + Math.random().toString(36).substr(2, 5),
+          read: false,
+          timestamp: new Date().toISOString()
+        };
+        set(state => ({
+          notifications: [newNotif, ...state.notifications],
+          unreadNotifications: state.unreadNotifications + 1
+        }));
+      },
+
+      markNotificationsRead: () => {
+        set(state => ({
+          notifications: state.notifications.map(n => ({...n, read: true})),
+          unreadNotifications: 0
+        }));
+      },
+
+      addAnomaly: (anomaly) => {
+        const newAnomaly = {
+          ...anomaly,
+          id: Date.now() + Math.random().toString(36).substr(2, 5),
+          timestamp: new Date().toISOString()
+        };
+        set(state => ({
+          anomalies: [newAnomaly, ...state.anomalies]
+        }));
+        
+        // Also trigger a notification
+        get().addNotification({
+          title: 'Crowd Anomaly Detected',
+          message: `Unexpected crowd surge at ${anomaly.name}`,
+          type: anomaly.severity === 'high' ? 'critical' : 'warning'
+        });
+      },
+
+      triggerSOS: async (location = null) => {
+        const state = get();
+        const sosLocation = location || state.userLocation;
+        const msg = `🚨 SOS EMERGENCY SIGNAL: Help needed at [${sosLocation.lat.toFixed(4)}, ${sosLocation.lng.toFixed(4)}]. Directly notifying nearest Police Force and Medical Response units.`;
+        
+        // 1. Add to community reports immediately
+        await state.submitReport({
+          text: msg,
+          lat: sosLocation.lat,
+          lng: sosLocation.lng,
+          type: 'emergency'
+        });
+
+        // 2. Add as a critical notification
+        state.addNotification({
+          title: 'SOS DISPATCHED',
+          message: 'Police and emergency services have been alerted to your current coordinate signatures.',
+          type: 'critical'
+        });
+
+        return true;
       }
     }),
     {
@@ -301,7 +393,9 @@ export const useStore = create(
         isAuthenticated: state.isAuthenticated,
         preferences: state.preferences,
         userPoints: state.userPoints,
-        reportsHistory: state.reportsHistory
+        reportsHistory: state.reportsHistory,
+        notifications: state.notifications,
+        anomalies: state.anomalies
       }),
     }
   )

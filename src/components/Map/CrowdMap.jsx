@@ -42,7 +42,7 @@ export const CrowdMap = () => {
   const { 
     crowdData, communityReports, fetchCrowdData, setSelectedLocation, 
     selectedLocation, viewMode, setViewMode, historySlider, setHistorySlider, 
-    userLocation, updateUserLocation, fetchCommunityReports, predictions 
+    userLocation, updateUserLocation, fetchCommunityReports, predictions, anomalies
   } = useStore();
   const [hoveredLocation, setHoveredLocation] = useState(null);
   const [isCommunityOpen, setIsCommunityOpen] = useState(false);
@@ -107,30 +107,43 @@ export const CrowdMap = () => {
           />
 
           {/* Crowd Heatmap Nodes */}
-          {crowdData.map((loc) => (
-             <HeatmapNode 
-                key={loc.id} 
-                location={loc} 
-                isSelected={selectedLocation?.id === loc.id}
-                onClick={() => setSelectedLocation(loc)}
-                onHover={() => setHoveredLocation(loc)}
-                onLeave={() => setHoveredLocation(null)}
-             />
-          ))}
+          {/* Crowd Heatmap Nodes */}
+          {crowdData.map((loc) => {
+             const isAnomaly = anomalies.some(a => a.locationId === loc.id);
+             return (
+               <HeatmapNode 
+                  key={loc.id} 
+                  location={loc} 
+                  isSelected={selectedLocation?.id === loc.id}
+                  isAnomaly={isAnomaly}
+                  onClick={() => setSelectedLocation(loc)}
+                  onHover={() => setHoveredLocation(loc)}
+                  onLeave={() => setHoveredLocation(null)}
+               />
+             );
+          })}
 
-          {/* User Reports Markers */}
           {communityReports.map((report, i) => (
              <CircleMarker 
                 key={`report-${i}`}
                 center={[report.lat, report.lng]} 
-                radius={14} 
-                pathOptions={{ color: '#00FF9C', fillOpacity: 0.3, weight: 2, dashArray: '4, 4' }}
+                radius={report.type === 'emergency' ? 30 : 14} 
+                pathOptions={{ 
+                  color: report.type === 'emergency' ? '#EF4444' : '#00FF9C', 
+                  fillColor: report.type === 'emergency' ? '#EF4444' : '#00FF9C',
+                  fillOpacity: report.type === 'emergency' ? 0.4 : 0.3, 
+                  weight: report.type === 'emergency' ? 4 : 2, 
+                  dashArray: report.type === 'emergency' ? '10, 10' : '4, 4',
+                  className: report.type === 'emergency' ? 'animate-pulse' : ''
+                }}
              >
                 <Popup>
                    <div className="p-3">
                       <div className="flex items-center gap-2 mb-2">
-                         <div className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
-                         <span className="text-[10px] font-black uppercase tracking-widest text-secondary">Global Intel</span>
+                         <div className={`w-2 h-2 rounded-full animate-pulse ${report.type === 'emergency' ? 'bg-red-500' : 'bg-secondary'}`} />
+                         <span className={`text-[10px] font-black uppercase tracking-widest ${report.type === 'emergency' ? 'text-red-500' : 'text-secondary'}`}>
+                           {report.type === 'emergency' ? 'CRITICAL SOS' : 'Global Intel'}
+                         </span>
                       </div>
                       <p className="text-xs font-bold leading-relaxed">{report.text}</p>
                    </div>
@@ -138,6 +151,29 @@ export const CrowdMap = () => {
              </CircleMarker>
           ))}
         </MapContainer>
+
+        {/* Global Emergency Alert Banner */}
+        <AnimatePresence>
+          {communityReports.some(r => r.type === 'emergency') && (
+            <motion.div 
+              initial={{ y: -100, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -100, opacity: 0 }}
+              className="absolute top-0 left-0 right-0 z-[2000] bg-red-600/90 backdrop-blur-md px-12 py-3 border-b border-red-500/50 flex items-center justify-between"
+            >
+               <div className="flex items-center gap-6">
+                  <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white animate-pulse">
+                     <Zap size={20} />
+                  </div>
+                  <div>
+                     <h5 className="text-sm font-black text-white uppercase tracking-widest">Active SOS Emergency</h5>
+                     <p className="text-[10px] text-white/70 font-bold">Tragedy/Incident reported in the sector. Emergency services are in transit - AVOID AREA.</p>
+                  </div>
+               </div>
+               <Badge variant="danger" className="bg-white text-red-600 font-black border-none animate-bounce">PRIORITY 1</Badge>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Map UI Navigation Overlay */}
         <motion.div 
@@ -190,15 +226,35 @@ export const CrowdMap = () => {
                  <div className="absolute top-3 right-3 w-3 h-3 bg-red-500 rounded-full border-2 border-[#04060A] animate-bounce" />
               )}
            </motion.button>
-           
-           <motion.button 
+                      <motion.button 
              variants={itemVariants}
              className="w-20 h-20 glass-panel rounded-[2rem] border-white/10 flex flex-col items-center justify-center text-white/20 hover:text-white hover:border-white/30 transition-all shadow-2xl group"
-           >
-              <HelpCircle size={26} className="group-hover:rotate-12 transition-transform" />
-              <span className="text-[9px] font-black uppercase mt-1">Guide</span>
-           </motion.button>
-        </motion.div>
+            >
+               <HelpCircle size={26} className="group-hover:rotate-12 transition-transform" />
+               <span className="text-[9px] font-black uppercase mt-1">Guide</span>
+            </motion.button>
+
+            <motion.button 
+              variants={itemVariants}
+              onClick={() => {
+                if (confirm("🚨 EMERGENCY SOS TACTICAL RESPONSE 🚨\n\nThis will instantly broadcast your coordinates to local Police and medical units. Are you sure you wish to trigger SOS?")) {
+                  useStore.getState().triggerSOS();
+                  import('sonner').then(({ toast }) => {
+                    toast.error("SOS SIGNAL BROADCASTED", {
+                      description: "Emergency units are tracking your signal. Stay in a safe zone.",
+                      duration: 10000,
+                    });
+                  });
+                }
+              }}
+              className="w-20 h-28 bg-red-600/20 border border-red-500/50 rounded-[2.5rem] flex flex-col items-center justify-center text-red-500 hover:bg-red-600 hover:text-white transition-all shadow-[0_0_50px_rgba(239,68,68,0.4)] animate-pulse hover:animate-none group relative overflow-hidden"
+            >
+               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/10 to-transparent -translate-y-full group-hover:animate-shimmer" />
+               <Zap size={32} className="relative z-10 group-hover:scale-125 transition-transform duration-500" />
+               <span className="text-[10px] font-black uppercase mt-2 relative z-10 tracking-[0.2em]">SOS</span>
+               <div className="absolute -bottom-2 w-12 h-1 bg-red-500 blur-md opacity-50" />
+            </motion.button>
+         </motion.div>
 
         {/* Dynamic Timeline Slider */}
         <motion.div 
@@ -330,29 +386,45 @@ export const CrowdMap = () => {
   );
 };
 
-const HeatmapNode = React.memo(({ location, onClick, onHover, onLeave, isSelected }) => {
+const HeatmapNode = React.memo(({ location, onClick, onHover, onLeave, isSelected, isAnomaly }) => {
   const color = 
     location.density > 75 ? '#FF4D4D' : 
     location.density > 45 ? '#FACC15' : 
     '#00FF9C';
 
   return (
-    <CircleMarker
-       center={[location.lat, location.lng]}
-       radius={isSelected ? 14 : 10}
-       pathOptions={{ 
-         color: isSelected ? '#00C2FF' : 'transparent',
-         fillColor: color, 
-         fillOpacity: isSelected ? 0.9 : 0.6,
-         weight: isSelected ? 4 : 0
-       }}
-       eventHandlers={{
-         click: onClick,
-         mouseover: onHover,
-         mouseout: onLeave
-       }}
-    >
-       <Popup>{location.name}: {Math.round(location.density)}% Busy</Popup>
-    </CircleMarker>
+    <>
+      {isAnomaly && (
+        <CircleMarker
+          center={[location.lat, location.lng]}
+          radius={20}
+          pathOptions={{
+            color: '#FF4D4D',
+            fillColor: '#FF4D4D',
+            fillOpacity: 0.2,
+            weight: 2,
+            dashArray: '5,10',
+            className: 'animate-pulse'
+          }}
+        />
+      )}
+      <CircleMarker
+         center={[location.lat, location.lng]}
+         radius={isSelected ? 14 : 10}
+         pathOptions={{ 
+           color: isSelected ? '#00C2FF' : (isAnomaly ? '#FF4D4D' : 'transparent'),
+           fillColor: color, 
+           fillOpacity: isSelected ? 0.9 : 0.6,
+           weight: isSelected || isAnomaly ? 4 : 0
+         }}
+         eventHandlers={{
+           click: onClick,
+           mouseover: onHover,
+           mouseout: onLeave
+         }}
+      >
+         <Popup>{location.name}: {Math.round(location.density)}% Busy {isAnomaly && '- ANOMALY'} </Popup>
+      </CircleMarker>
+    </>
   );
 });

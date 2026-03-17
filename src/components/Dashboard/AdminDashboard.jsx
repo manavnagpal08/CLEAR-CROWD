@@ -7,7 +7,7 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, 
 import { useStore } from '../../store/useStore';
 
 export const AdminDashboard = () => {
-  const { crowdData, communityReports } = useStore();
+  const { crowdData, communityReports, anomalies } = useStore();
   const [liveLogs, setLiveLogs] = useState([
     { id: 1, type: 'critical', msg: 'Critical congestion detected near MG Road station', time: 'Just now', area: 'Zone A', status: 'active' },
     { id: 2, type: 'warning', msg: 'Incoming crowd from Zomaland Fest event', time: '2m ago', area: 'Central Park', status: 'active' },
@@ -64,6 +64,32 @@ export const AdminDashboard = () => {
              <option value="6h">Last 6 Hours</option>
              <option value="24h">Last 24 Hours</option>
           </select>
+          <Button 
+            variant="secondary" 
+            className="h-14 border-yellow-500/20 text-yellow-500 hover:bg-yellow-500/10"
+            onClick={() => {
+              const loc = crowdData[Math.floor(Math.random() * crowdData.length)] || { id: 'test', name: 'Sector 7G' };
+              useStore.getState().addAnomaly({ 
+                locationId: loc.id, 
+                name: loc.name, 
+                severity: Math.random() > 0.5 ? 'high' : 'medium' 
+              });
+              toast.warning("Manual Anomaly Signal Dispatched");
+            }}
+          >
+             <Zap size={18} className="mr-2" /> Inject Spike
+          </Button>
+          <Button 
+            variant="danger" 
+            className="h-14 border-red-500/20 text-red-500 hover:bg-red-500/10 shadow-[0_0_20px_rgba(239,68,68,0.2)]"
+            onClick={() => {
+              const loc = crowdData[Math.floor(Math.random() * crowdData.length)] || { id: 'test', name: 'Downtown Sector' };
+              useStore.getState().triggerSOS({ lat: loc.lat, lng: loc.lng });
+              toast.error("EMERGENCY SIGNAL INJECTED");
+            }}
+          >
+             <ShieldAlert size={18} className="mr-2" /> SOS Simulation
+          </Button>
           <Button className="flex-1 lg:flex-none h-14 rounded-2xl shadow-2xl shadow-primary/20">
              <AlertCircle size={18} className="mr-2" /> Global Alert
           </Button>
@@ -163,6 +189,77 @@ export const AdminDashboard = () => {
                    </tbody>
                 </table>
              </div>
+          </div>
+
+          {/* AI Anomaly Detection Engine List */}
+          <div className="glass-panel p-10 rounded-[3.5rem] border-white/5 overflow-hidden">
+             <div className="flex justify-between items-center mb-8">
+               <h4 className="text-2xl font-black italic">Anomalies Detected Today</h4>
+               <Badge variant="warning" className="animate-pulse">{anomalies.length} Signals</Badge>
+             </div>
+             {anomalies.length === 0 ? (
+                <div className="h-32 flex flex-col items-center justify-center border border-white/5 rounded-3xl bg-white/[0.02]">
+                  <p className="text-sm font-medium text-white/30 italic">No anomalies detected by AI logic engine.</p>
+                </div>
+             ) : (
+                <div className="space-y-4">
+                   {anomalies.map((anomaly) => (
+                      <div key={anomaly.id} className={`p-5 rounded-3xl border border-white/5 flex items-center justify-between ${anomaly.severity === 'high' ? 'bg-red-500/10 border-red-500/20' : 'bg-yellow-500/10 border-yellow-500/20'}`}>
+                         <div className="flex items-center gap-4">
+                            <ShieldAlert className={anomaly.severity === 'high' ? 'text-red-500' : 'text-yellow-500'} size={24} />
+                            <div>
+                               <p className="text-lg font-bold text-white">{anomaly.name}</p>
+                               <p className="text-xs text-white/50">{new Date(anomaly.timestamp).toLocaleTimeString()} - Unusual spike pattern detected.</p>
+                            </div>
+                         </div>
+                         <Button size="sm" variant={anomaly.severity === 'high' ? 'danger' : 'secondary'}>Investigate</Button>
+                      </div>
+                   ))}
+                </div>
+             )}
+          </div>
+
+          {/* Emergency SOS Monitoring */}
+          <div className="glass-panel p-10 rounded-[3.5rem] border-red-500/20 bg-red-500/5 relative overflow-hidden group">
+             <div className="absolute top-0 right-0 w-64 h-64 bg-red-500/10 blur-[100px] -z-10" />
+             <div className="flex justify-between items-center mb-8">
+               <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-red-600 flex items-center justify-center text-white shadow-[0_0_20px_rgba(239,68,68,0.5)]">
+                    <Zap size={24} className="animate-pulse" />
+                  </div>
+                  <div>
+                     <h4 className="text-2xl font-black italic">Emergency SOS Monitor</h4>
+                     <p className="text-[10px] text-red-500/60 uppercase font-black tracking-widest mt-1">Direct police & medical uplink</p>
+                  </div>
+               </div>
+               {communityReports.filter(r => r.type === 'emergency').length > 0 && (
+                  <Badge variant="danger" className="animate-bounce">URGENT ACTION REQUIRED</Badge>
+               )}
+             </div>
+             
+             {communityReports.filter(r => r.type === 'emergency').length === 0 ? (
+                <div className="h-32 flex flex-col items-center justify-center border border-white/5 rounded-3xl bg-white/[0.02]">
+                  <p className="text-sm font-medium text-white/20 italic">No active SOS signals detected in the grid.</p>
+                </div>
+             ) : (
+                <div className="space-y-4">
+                   {communityReports.filter(r => r.type === 'emergency').map((sos, idx) => (
+                      <div key={idx} className="p-6 rounded-3xl bg-red-600/10 border border-red-500/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                         <div className="flex items-start gap-4">
+                            <ShieldCheck className="text-red-500 mt-1" size={20} />
+                            <div>
+                               <p className="text-sm font-bold text-white leading-relaxed">{sos.text}</p>
+                               <span className="text-[10px] text-white/40 uppercase font-black">{new Date(sos.timestamp).toLocaleTimeString()} • Coordinates: {sos.lat.toFixed(4)}, {sos.lng.toFixed(4)}</span>
+                            </div>
+                         </div>
+                         <div className="flex gap-2 shrink-0">
+                            <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white rounded-xl text-[10px] font-black uppercase">Dispatch Police</Button>
+                            <Button size="sm" variant="secondary" className="rounded-xl text-[10px] font-black uppercase">Contact User</Button>
+                         </div>
+                      </div>
+                   ))}
+                </div>
+             )}
           </div>
         </div>
 
