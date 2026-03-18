@@ -90,21 +90,21 @@ export const LoginPage = () => {
             
             <div className="flex items-center gap-4">
                <div className="h-[2px] w-12 bg-primary rounded-full" />
-               <span className="text-[12px] uppercase font-black tracking-[0.6em] text-white/40">Neural Intelligence v4.0</span>
+               <span className="text-[12px] uppercase font-black tracking-[0.6em] text-white/40">Crowd Intelligence v4.0</span>
             </div>
 
             <p className="text-xl text-white/50 max-w-md leading-relaxed font-medium mt-8">
-              Protecting urban citizens through <span className="text-primary font-black italic">Advanced Predictive Analytics</span> and real-time crowd dynamics monitoring.
+              Real-time crowd insights for a <span className="text-primary font-black italic">Smarter, Safer City</span>.
             </p>
 
             <div className="grid grid-cols-2 gap-8 pt-12">
                <div className="space-y-2 border-l border-white/10 pl-6">
                   <span className="text-3xl font-black text-white italic">160+</span>
-                  <p className="text-[10px] text-white/20 uppercase font-black tracking-widest">Active Tactical Nodes</p>
+                  <p className="text-[10px] text-white/20 uppercase font-black tracking-widest">City Data Points</p>
                </div>
                <div className="space-y-2 border-l border-white/10 pl-6">
                   <span className="text-3xl font-black text-secondary italic">99.4%</span>
-                  <p className="text-[10px] text-white/20 uppercase font-black tracking-widest">Signal Reliability</p>
+                  <p className="text-[10px] text-white/20 uppercase font-black tracking-widest">System Accuracy</p>
                </div>
             </div>
           </motion.div>
@@ -150,12 +150,12 @@ export const LoginPage = () => {
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
             
             <div className="space-y-2 mb-8 md:mb-12">
-               <Badge variant="info" className="mb-4 py-1.5 px-6 text-[9px] md:text-[10px] bg-primary/10 border-primary/20 animate-pulse text-glow">Secure Tactical Authorization</Badge>
+               <Badge variant="info" className="mb-4 py-1.5 px-6 text-[9px] md:text-[10px] bg-primary/10 border-primary/20 animate-pulse text-glow uppercase tracking-widest">Secure Access</Badge>
                <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic drop-shadow-2xl font-orbitron">
-                 {isLogin ? 'Access' : 'Deploy'}
+                 {isLogin ? 'Login' : 'Sign Up'}
                </h2>
                <p className="text-white/40 text-sm font-medium tracking-tight">
-                 {isLogin ? 'Initialize your neural handshake.' : 'Register your signature to the grid.'}
+                 {isLogin ? 'Welcome back to ClearCrowd.' : 'Create an account to join the network.'}
                </p>
             </div>
 
@@ -170,11 +170,11 @@ export const LoginPage = () => {
                       exit={{ height: 0, opacity: 0 }}
                       className="space-y-2 overflow-hidden"
                     >
-                      <label className="text-[10px] uppercase font-black text-white/20 tracking-widest ml-2 italic">Neural Name</label>
+                      <label className="text-[10px] uppercase font-black text-white/20 tracking-widest ml-2 italic">Full Name</label>
                       <div className="relative group">
                          <User className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-primary transition-colors" size={18} />
                          <input
-                           placeholder="Enter Identity"
+                           placeholder="Enter your name"
                            value={name}
                            onChange={(e) => setName(e.target.value)}
                            required={!isLogin}
@@ -186,11 +186,11 @@ export const LoginPage = () => {
                 </AnimatePresence>
 
                 <div className="space-y-2">
-                   <label className="text-[10px] uppercase font-black text-white/20 tracking-widest ml-2 italic">Signal Address</label>
+                   <label className="text-[10px] uppercase font-black text-white/20 tracking-widest ml-2 italic">Email Address</label>
                    <div className="relative group">
                       <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-primary transition-colors" size={18} />
                       <input
-                        placeholder="commander@nexus.grid"
+                        placeholder="your@email.com"
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
@@ -201,7 +201,7 @@ export const LoginPage = () => {
                 </div>
                 
                 <div className="space-y-2">
-                   <label className="text-[10px] uppercase font-black text-white/20 tracking-widest ml-2 italic">Security Key</label>
+                   <label className="text-[10px] uppercase font-black text-white/20 tracking-widest ml-2 italic">Password</label>
                    <div className="relative group">
                       <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-primary transition-colors" size={18} />
                       <input
@@ -219,14 +219,14 @@ export const LoginPage = () => {
               <div className="pt-4 space-y-6">
                 <Button size="lg" className="w-full h-20 font-black tracking-[0.2em] italic text-md group/btn bg-primary hover:bg-white transition-all shadow-3xl shadow-primary/20 border-none rounded-[2.5rem]" isLoading={loading} type="submit">
                   <span className="flex items-center gap-3">
-                    {isLogin ? 'INITIALIZE ACCESS' : 'CREATE GRID ID'} 
+                    {isLogin ? 'LOG IN' : 'SIGN UP'} 
                     <ArrowRight size={20} className="group-hover/btn:translate-x-2 transition-transform" />
                   </span>
                 </Button>
 
                 <div className="flex items-center gap-4">
                    <div className="h-px flex-1 bg-white/5" />
-                   <span className="text-[9px] font-black text-white/10 uppercase tracking-[0.4em]">Integrated Sign-In</span>
+                   <span className="text-[9px] font-black text-white/10 uppercase tracking-[0.4em]">Or continue with</span>
                    <div className="h-px flex-1 bg-white/5" />
                 </div>
 
@@ -237,7 +237,7 @@ export const LoginPage = () => {
                     className="w-full h-16 glass-premium hover:bg-white/5 rounded-3xl border-white/5 text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-4 group transition-all"
                   >
                     <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pwa/google.svg" alt="Google" className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                    Neural Federated Login
+                    Continue with Google
                   </button>
                 </div>
               </div>
@@ -246,17 +246,17 @@ export const LoginPage = () => {
 
           <div className="mt-12 text-center space-y-4">
              <p className="text-xs text-white/30 font-medium">
-               {isLogin ? "Neural signature not in grid?" : "Already have a registered ID?"}{' '}
+               {isLogin ? "Don't have an account?" : "Already have an account?"}{' '}
                <button 
                  onClick={() => setIsLogin(!isLogin)}
                  className="text-primary font-black uppercase tracking-widest hover:text-white transition-all ml-2 underline-offset-8 hover:underline"
                >
-                 {isLogin ? 'Join Network' : 'Identify Self'}
+                 {isLogin ? 'Sign Up' : 'Log In'}
                </button>
              </p>
 
              <p className="text-[10px] text-white/5 uppercase font-black tracking-[0.6em] mt-20">
-               ClearCrowd Autonomous System • Build ID 0x98A1
+               ClearCrowd System • v2.4.0
              </p>
           </div>
         </motion.div>
