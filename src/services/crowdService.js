@@ -39,6 +39,33 @@ const REAL_LANDMARKS = [
   { name: 'Viman Nagar (Phoenix)', lat: 18.5622, lng: 73.9167, type: 'shopping' },
   { name: 'Hinjewadi IT Park Ph1', lat: 18.5907, lng: 73.7371, type: 'traffic' },
   { name: 'Magarpatta City', lat: 18.5144, lng: 73.9262, type: 'traffic' },
+
+  // --- HYDERABAD ---
+  { name: 'Charminar', lat: 17.3616, lng: 78.4747, type: 'tourist' },
+  { name: 'HITEC City', lat: 17.4435, lng: 78.3772, type: 'traffic' },
+  { name: 'Gachibowli Junction', lat: 17.4401, lng: 78.3489, type: 'traffic' },
+  { name: 'Hussain Sagar', lat: 17.4239, lng: 78.4738, type: 'tourist' },
+  { name: 'Banjara Hills Rd 1', lat: 17.4162, lng: 78.4506, type: 'shopping' },
+  { name: 'Paradise Circle', lat: 17.4434, lng: 78.4855, type: 'food' },
+  { name: 'Jubilee Hills Checkpost', lat: 17.4265, lng: 78.4116, type: 'traffic' },
+
+  // --- KOLKATA ---
+  { name: 'Victoria Memorial', lat: 22.5448, lng: 88.3426, type: 'tourist' },
+  { name: 'Howrah Bridge', lat: 22.5851, lng: 88.3468, type: 'traffic' },
+  { name: 'Park Street', lat: 22.5529, lng: 88.3524, type: 'shopping' },
+  { name: 'Salt Lake Sector V', lat: 22.5735, lng: 88.4331, type: 'traffic' },
+  { name: 'Kolkata Airport', lat: 22.6517, lng: 88.4467, type: 'metro' },
+  { name: 'Esplanade', lat: 22.5645, lng: 88.3522, type: 'shopping' },
+  { name: 'Eden Gardens', lat: 22.5646, lng: 88.3433, type: 'tourist' },
+
+  // --- CHENNAI ---
+  { name: 'Marina Beach', lat: 13.0475, lng: 80.2824, type: 'tourist' },
+  { name: 'T. Nagar (Panagal Park)', lat: 13.0405, lng: 80.2337, type: 'shopping' },
+  { name: 'Adyar Circle', lat: 13.0064, lng: 80.2573, type: 'shopping' },
+  { name: 'OMR IT Corridor', lat: 12.9150, lng: 80.2300, type: 'traffic' },
+  { name: 'Chennai Central', lat: 13.0827, lng: 80.2707, type: 'metro' },
+  { name: 'Anna Salai', lat: 13.0617, lng: 80.2600, type: 'traffic' },
+  { name: 'Spencer Plaza', lat: 13.0640, lng: 80.2608, type: 'shopping' },
 ];
 
 const calculateDensityForType = (type, hour) => {
@@ -91,8 +118,8 @@ export const generatePointsAround = (lat, lng) => {
     });
   });
 
-  // 2. Generate 35 Tactical Nodes around these landmarks to reach ~55 points
-  for (let i = 0; i < 35; i++) {
+  // 2. Generate 85 Tactical Nodes around these landmarks to reach ~150 points
+  for (let i = 0; i < 85; i++) {
     const parent = REAL_LANDMARKS[i % REAL_LANDMARKS.length];
     // Spread nodes within 2km of landmarks
     const latOff = (Math.random() - 0.5) * 0.03;

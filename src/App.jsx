@@ -17,11 +17,17 @@ function App() {
   const [isStarting, setIsStarting] = useState(true);
 
   useEffect(() => {
+    console.log("App.jsx: useEffect initializing auth and location");
     initAuth();
     updateUserLocation();
-    const timer = setTimeout(() => setIsStarting(false), 2800);
+    const timer = setTimeout(() => {
+      console.log("App.jsx: Splash screen timer finished");
+      setIsStarting(false);
+    }, 2800);
     return () => clearTimeout(timer);
   }, [initAuth, updateUserLocation]);
+
+  console.log("App.jsx: Render state", { isStarting, isAuthenticated, activeTab });
 
   return (
     <div className="relative min-h-screen bg-background text-white overflow-hidden selection:bg-primary/30">

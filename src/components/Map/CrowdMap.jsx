@@ -6,7 +6,7 @@ import { useStore } from '../../store/useStore';
 import { Badge } from '../ui';
 import { CommunityFeed } from '../Community/CommunityFeed';
 import { CrowdAssistant } from '../Community/CrowdAssistant';
-import { MessageSquare, MousePointer2, Clock, Map as MapIcon, Navigation, HelpCircle, Bot, Zap } from 'lucide-react';
+import { MessageSquare, MousePointer2, Clock, Map as MapIcon, Navigation, HelpCircle, Bot, Zap, Activity, Shield } from 'lucide-react';
 import { ReportCrowdButton } from './ReportCrowdButton';
 import { UserInsightsPanel } from '../../features/userInsights';
 import L from 'leaflet';
@@ -45,11 +45,18 @@ export const CrowdMap = () => {
     selectedLocation, viewMode, setViewMode, historySlider, setHistorySlider, 
     userLocation, updateUserLocation, fetchCommunityReports, predictions, anomalies
   } = useStore();
+  console.log("CrowdMap: Rendering", { 
+    crowdDataLength: crowdData?.length, 
+    selectedLocationId: selectedLocation?.id,
+    userLocation: userLocation
+  });
+
   const [hoveredLocation, setHoveredLocation] = useState(null);
   const [isCommunityOpen, setIsCommunityOpen] = useState(false);
   const [mapLayer, setMapLayer] = useState('standard'); // 'standard' | 'heatmap' | 'security'
 
   useEffect(() => {
+    console.log("CrowdMap: Initializing location and reports");
     updateUserLocation();
     fetchCommunityReports();
     const interval = setInterval(() => {
@@ -186,7 +193,7 @@ export const CrowdMap = () => {
             >
                <div className="flex items-center gap-3 md:gap-6">
                   <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/20 flex items-center justify-center text-white animate-pulse shrink-0">
-                     <Zap size={16} md:size={20} />
+                     <Zap className="w-4 h-4 md:w-5 md:h-5" />
                   </div>
                   <div className="min-w-0">
                      <h5 className="text-[10px] md:text-sm font-black text-white uppercase tracking-widest truncate">Active SOS Emergency</h5>
@@ -218,9 +225,9 @@ export const CrowdMap = () => {
                       : 'text-white/30 hover:text-white'
                    }`}
                  >
-                   {layer === 'standard' && <MapIcon size={10} md:size={12} />}
-                   {layer === 'heatmap' && <Activity size={10} md:size={12} />}
-                   {layer === 'security' && <Shield size={10} md:size={12} />}
+                   {layer === 'standard' && <MapIcon className="w-2.5 h-2.5 md:w-3 md:h-3" />}
+                   {layer === 'heatmap' && <Activity className="w-2.5 h-2.5 md:w-3 md:h-3" />}
+                   {layer === 'security' && <Shield className="w-2.5 h-2.5 md:w-3 md:h-3" />}
                    {layer}
                  </button>
                ))}
@@ -251,7 +258,7 @@ export const CrowdMap = () => {
             onClick={updateUserLocation}
             className="w-10 h-10 md:w-14 md:h-14 glass-panel rounded-xl md:rounded-2xl border border-white/10 flex items-center justify-center text-white/40 hover:text-primary transition-all group shadow-2xl active:scale-90"
           >
-             <Navigation size={18} md:size={22} className="group-hover:rotate-[360deg] transition-transform duration-700" />
+             <Navigation className="w-4.5 h-4.5 md:w-5.5 md:h-5.5 group-hover:rotate-[360deg] transition-transform duration-700" />
           </motion.button>
         </motion.div>
 
@@ -299,7 +306,7 @@ export const CrowdMap = () => {
               className="w-14 h-20 md:w-20 md:h-28 bg-red-600/20 border border-red-500/50 rounded-[1.8rem] md:rounded-[2.5rem] flex flex-col items-center justify-center text-red-500 hover:bg-red-600 hover:text-white transition-all shadow-[0_0_50px_rgba(239,68,68,0.4)] animate-pulse hover:animate-none group relative overflow-hidden shrink-0"
             >
                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/10 to-transparent -translate-y-full group-hover:animate-shimmer" />
-               <Zap size={24} md:size={32} className="relative z-10 group-hover:scale-125 transition-transform duration-500" />
+               <Zap className="relative z-10 group-hover:scale-125 transition-transform duration-500 w-6 h-6 md:w-8 md:h-8" />
                <span className="text-[8px] md:text-[10px] font-black uppercase mt-2 relative z-10 tracking-[0.2em]">SOS</span>
                <div className="absolute -bottom-2 w-10 md:w-12 h-1 bg-red-500 blur-md opacity-50" />
             </motion.button>

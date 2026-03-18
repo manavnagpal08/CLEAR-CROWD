@@ -1,15 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Map as MapIcon, LayoutDashboard, Bell, LogOut, Settings, User, AlertTriangle, Info, CheckCircle2, Zap } from 'lucide-react';
+import { 
+  Shield, Map as MapIcon, LayoutDashboard, Bell, LogOut, Settings, User, 
+  AlertTriangle, Info, CheckCircle2, Zap, Globe, Cpu, Radio, Network, 
+  Command, ChevronDown, Activity, Navigation, Smartphone, Satellite
+} from 'lucide-react';
 import { useStore } from '../../store/useStore';
 import { Button, Badge } from '../ui';
 import { toast } from 'sonner';
 
 export const Header = () => {
-  const { activeTab, setActiveTab, logout, user, userPoints, getUserBadge, notifications, unreadNotifications, markNotificationsRead } = useStore();
+  const { 
+    activeTab, setActiveTab, logout, user, userPoints, getUserBadge, 
+    notifications, unreadNotifications, markNotificationsRead, updateUserLocation
+  } = useStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
+  const [showCitySwitcher, setShowCitySwitcher] = useState(false);
+  const [showNeuralHub, setShowNeuralHub] = useState(false);
   const badge = getUserBadge();
+
+  const cities = [
+    { name: 'Bengaluru', id: 'blr', lat: 12.9716, lng: 77.5946, status: 'Stable' },
+    { name: 'Delhi NCR', id: 'del', lat: 28.6139, lng: 77.2090, status: 'High Load' },
+    { name: 'Pune', id: 'pun', lat: 18.5204, lng: 73.8567, status: 'Optimal' },
+    { name: 'Hyderabad', id: 'hyd', lat: 17.3850, lng: 78.4867, status: 'Busy' },
+    { name: 'Kolkata', id: 'kol', lat: 22.5726, lng: 88.3639, status: 'Moderate' },
+    { name: 'Chennai', id: 'chn', lat: 13.0827, lng: 80.2707, status: 'Stable' }
+  ];
 
   // Watch for new unread notifications and show toast
   useEffect(() => {
@@ -37,7 +55,7 @@ export const Header = () => {
         >
           <div className="w-10 h-10 md:w-16 md:h-16 bg-primary rounded-xl md:rounded-[1.8rem] flex items-center justify-center shadow-[0_0_40px_rgba(0,194,255,0.4)] group-hover:scale-105 transition-all duration-500 relative overflow-hidden shrink-0">
             <div className="absolute inset-x-0 h-1.5 md:h-2 bg-white/40 blur-lg animate-scanLineMove opacity-30" />
-            <Shield className="text-[#020408] fill-[#020408] relative z-10" size={20} md:size={32} />
+            <Shield className="text-[#020408] fill-[#020408] relative z-10 w-5 h-5 md:w-8 md:h-8" />
           </div>
           <div className="min-w-0">
             <h1 className="text-xl md:text-3xl font-black tracking-tighter text-white uppercase italic font-orbitron leading-none truncate">
@@ -58,11 +76,113 @@ export const Header = () => {
           className="hidden lg:flex items-center glass-premium rounded-[3rem] p-2 gap-2 pointer-events-auto border-white/5 shadow-[0_50px_100px_rgba(0,0,0,0.5)]"
         >
           <NavButton active={activeTab === 'map'} onClick={() => setActiveTab('map')} icon={<MapIcon size={18} />} label="Satellite" />
+          
+          <div className="relative group">
+            <button 
+              onClick={() => setShowCitySwitcher(!showCitySwitcher)}
+              className={`flex items-center gap-2 px-6 py-2.5 rounded-2xl transition-all duration-300 font-black uppercase text-[10px] tracking-widest border ${showCitySwitcher ? 'bg-primary/10 border-primary/40 text-primary shadow-[0_0_20px_rgba(0,194,255,0.2)]' : 'bg-transparent border-white/5 text-white/40 hover:bg-white/5 hover:text-white'}`}
+            >
+              <Globe size={14} className={showCitySwitcher ? 'animate-spin-slow' : ''} />
+              Region Matrix
+              <ChevronDown size={12} className={`transition-transform duration-500 ${showCitySwitcher ? 'rotate-180' : ''}`} />
+            </button>
+            
+            <AnimatePresence>
+              {showCitySwitcher && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 15, scale: 0.95 }}
+                  className="absolute top-14 left-0 w-64 glass-premium rounded-3xl border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.8)] p-3 z-[200] overflow-hidden"
+                >
+                  <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary to-secondary opacity-50" />
+                  <div className="flex flex-col gap-1">
+                    {cities.map(city => (
+                      <button 
+                        key={city.id}
+                        onClick={() => {
+                          useStore.setState({ userLocation: { lat: city.lat, lng: city.lng } });
+                          toast.info(`Switching Command to ${city.name} Sector`);
+                          setShowCitySwitcher(false);
+                        }}
+                        className="flex items-center justify-between p-3 rounded-2xl bg-white/[0.02] hover:bg-white/10 border border-transparent hover:border-white/5 transition-all group"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`w-2 h-2 rounded-full ${city.status === 'Stable' ? 'bg-secondary' : city.status === 'High Load' ? 'bg-red-500' : 'bg-primary'} animate-pulse`} />
+                          <span className="text-[11px] font-black text-white/80 uppercase tracking-tighter group-hover:text-white">{city.name}</span>
+                        </div>
+                        <span className="text-[8px] font-black text-white/20 uppercase group-hover:text-primary transition-colors">{city.status}</span>
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
           {user?.role === 'admin' && (
             <NavButton active={activeTab === 'admin'} onClick={() => setActiveTab('admin')} icon={<LayoutDashboard size={18} />} label="Tactical" />
           )}
           <NavButton active={activeTab === 'workflow'} onClick={() => setActiveTab('workflow')} icon={<Zap size={18} />} label="Architecture" />
-          <NavButton active={activeTab === 'alerts'} onClick={() => setActiveTab('alerts')} icon={<Bell size={18} />} label="Notifications" />
+          
+          <div className="relative">
+             <button 
+               onClick={() => setShowNeuralHub(!showNeuralHub)}
+               className={`flex items-center gap-2 h-10 px-6 rounded-full font-black text-[10px] uppercase tracking-widest transition-all duration-500 ${showNeuralHub ? 'bg-secondary text-slate-950 shadow-[0_0_30px_rgba(0,255,156,0.4)]' : 'bg-white/5 text-white/40 hover:bg-white/10'}`}
+             >
+                <Command size={14} className={showNeuralHub ? 'animate-pulse' : ''} />
+                Command Center
+             </button>
+             
+             <AnimatePresence>
+                {showNeuralHub && (
+                  <motion.div 
+                    initial={{ opacity: 0, x: -20, scale: 0.9 }}
+                    animate={{ opacity: 1, x: 0, scale: 1 }}
+                    exit={{ opacity: 0, x: -20, scale: 0.9 }}
+                    className="absolute top-14 left-0 w-80 glass-premium rounded-[2.5rem] border border-secondary/30 shadow-[0_40px_80px_rgba(0,0,0,0.8)] p-6 z-[200]"
+                  >
+                     <div className="flex items-center gap-4 mb-6">
+                        <div className="w-12 h-12 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary border border-secondary/20">
+                           <Activity size={24} />
+                        </div>
+                        <div>
+                           <h4 className="text-sm font-black text-white uppercase italic tracking-tighter">AI Tactical Overseer</h4>
+                           <p className="text-[8px] text-white/30 uppercase font-black tracking-widest">Active System State: NOMINAL</p>
+                        </div>
+                     </div>
+                     
+                     <div className="grid grid-cols-2 gap-3 mb-6">
+                        <div className="p-3 rounded-2xl bg-white/5 border border-white/5">
+                           <span className="text-[8px] font-black text-white/30 uppercase block mb-1">Grid Health</span>
+                           <span className="text-sm font-black text-secondary">99.8%</span>
+                        </div>
+                        <div className="p-3 rounded-2xl bg-white/5 border border-white/5">
+                           <span className="text-[8px] font-black text-white/30 uppercase block mb-1">Sat Nodes</span>
+                           <span className="text-sm font-black text-primary">1,240</span>
+                        </div>
+                     </div>
+                     
+                     <div className="space-y-3">
+                        <button className="w-full p-3 rounded-2xl bg-secondary/10 border border-secondary/20 hover:bg-secondary/20 transition-all flex items-center justify-between group">
+                           <div className="flex items-center gap-3 text-secondary text-[10px] font-black uppercase">
+                              <Radio size={14} className="animate-pulse" />
+                              Global SOS Alert
+                           </div>
+                           <ChevronDown size={12} className="-rotate-90 text-white/20 group-hover:text-secondary group-hover:translate-x-1 transition-all" />
+                        </button>
+                        <button className="w-full p-3 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all flex items-center justify-between group">
+                           <div className="flex items-center gap-3 text-white/50 text-[10px] font-black uppercase group-hover:text-white">
+                              <Satellite size={14} />
+                              Sensor Diagnostics
+                           </div>
+                           <ChevronDown size={12} className="-rotate-90 text-white/20 group-hover:translate-x-1 transition-all" />
+                        </button>
+                     </div>
+                  </motion.div>
+                )}
+             </AnimatePresence>
+          </div>
           
           <div className="h-10 w-px bg-white/10 mx-2" />
           
@@ -187,7 +307,7 @@ export const Header = () => {
              <div className="h-6 md:h-8 w-px bg-white/10 mx-0.5 md:mx-1 hidden sm:block" />
              
              <button onClick={logout} className="w-10 h-10 md:w-12 md:h-12 rounded-[1rem] md:rounded-[1.2rem] glass-panel border-red-500/20 items-center justify-center hover:bg-red-500/10 transition-all group flex shrink-0">
-                <LogOut size={16} md:size={20} className="text-red-500/40 group-hover:text-red-500 group-hover:rotate-12 transition-all" />
+                <LogOut className="text-red-500/40 group-hover:text-red-500 group-hover:rotate-12 transition-all w-4 h-4 md:w-5 md:h-5" />
              </button>
           </div>
           
