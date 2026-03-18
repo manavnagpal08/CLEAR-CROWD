@@ -36,8 +36,8 @@ export const ShouldGo = () => {
     return (
         <div className="space-y-4">
             <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase text-white/30 tracking-widest">AI DECISION ENGINE</span>
-                <Badge variant="info" className="text-[8px]">Decision Signal: {isIncreasing ? 'Diverging' : 'Stable'}</Badge>
+                <span className="text-[10px] font-black uppercase text-white/30 tracking-widest">SMART AI DECISION</span>
+                <Badge variant="info" className="text-[8px]">Status: {isIncreasing ? 'Crowding' : 'Stable'}</Badge>
             </div>
             
             <div className="relative group overflow-hidden bg-white/[0.02] rounded-[2.5rem] border border-white/5 p-8 text-center">
@@ -66,9 +66,9 @@ export const ShouldGo = () => {
             </div>
             
             <button className="w-full h-14 rounded-2xl bg-primary text-slate-950 font-black text-xs uppercase tracking-[0.2em] hover:scale-[1.02] active:scale-95 transition-all shadow-[0_10px_30px_rgba(0,194,255,0.2)] flex items-center justify-center gap-3 group">
-                Establish Neural Path
+                Get Best Route
                 <div className="w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center group-hover:rotate-45 transition-transform">
-                    <Info size={14} />
+                    <ArrowRight size={14} />
                 </div>
             </button>
         </div>

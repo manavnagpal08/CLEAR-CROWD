@@ -11,10 +11,10 @@ export const UserInsightsPanel = () => {
     const [activeTab, setActiveTab] = useState('should-go');
 
     const tabs = [
-        { id: 'should-go', label: 'AI Decision', icon: <Brain size={16} />, component: <ShouldGo /> },
-        { id: 'best-time', label: 'Finder', icon: <Clock size={16} />, component: <BestTime /> },
-        { id: 'why', label: 'Explain', icon: <Zap size={16} />, component: <WhyCrowd /> },
-        { id: 'emergency', label: 'Escape', icon: <Shield size={16} />, component: <Emergency /> },
+        { id: 'should-go', label: 'Should I Go?', icon: <Brain size={16} />, component: <ShouldGo /> },
+        { id: 'best-time', label: 'Best Time', icon: <Clock size={16} />, component: <BestTime /> },
+        { id: 'why', label: 'Why Crowded?', icon: <Zap size={16} />, component: <WhyCrowd /> },
+        { id: 'emergency', label: 'Safety', icon: <Shield size={16} />, component: <Emergency /> },
         { id: 'eco', label: 'Impact', icon: <Leaf size={16} />, component: <EcoImpact /> },
     ];
 

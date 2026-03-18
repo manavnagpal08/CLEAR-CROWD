@@ -22,10 +22,10 @@ export const BestTime = () => {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] font-black uppercase text-white/30 tracking-widest">TEMPORAL ANALYSIS</span>
+                <span className="text-[10px] font-black uppercase text-white/30 tracking-widest uppercase">Traffic Forecast</span>
                 <div className="flex items-center gap-1">
                    <div className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse" />
-                   <span className="text-[8px] font-black text-secondary uppercase tracking-[0.2em]">60m Matrix</span>
+                   <span className="text-[8px] font-black text-secondary uppercase tracking-[0.2em]">60m Analysis</span>
                 </div>
             </div>
 
@@ -81,7 +81,7 @@ export const BestTime = () => {
                 {/* Visual Label for Best Time on Chart */}
                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                    <span className="text-[8px] font-black text-white/20 uppercase tracking-[0.4em]">Neural Forecast Projection</span>
+                    <span className="text-[8px] font-black text-white/20 uppercase tracking-[0.4em]">AI Smart Forecast</span>
                 </div>
             </div>
         </div>

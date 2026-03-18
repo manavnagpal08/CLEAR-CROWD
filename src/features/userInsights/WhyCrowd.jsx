@@ -40,7 +40,7 @@ export const WhyCrowd = () => {
     return (
         <div className="space-y-6">
              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase text-white/30 tracking-widest uppercase">Explainable AI Intel</span>
+                <span className="text-[10px] font-black uppercase text-white/30 tracking-widest uppercase">SMART AI ANALYSIS</span>
                 <Zap size={16} className="text-secondary animate-pulse" />
              </div>
 
@@ -63,12 +63,12 @@ export const WhyCrowd = () => {
              <div className="relative overflow-hidden mt-6 p-6 rounded-[2.5rem] bg-white/[0.02] border border-white/5 group">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 blur-2xl -z-10 rounded-full" />
                 <p className="text-xs text-white/40 leading-relaxed font-medium italic relative z-10">
-                    "Cognitive engine identifies a mix of <span className="text-white font-black">{tags[0].label}</span> and <span className="text-white font-black">{tags[1]?.label || 'standard conditions'}</span> as the primary drivers of current density signatures in this sector."
+                    "AI Analysis identifies a mix of <span className="text-white font-black">{tags[0].label}</span> and <span className="text-white font-black">{tags[1]?.label || 'standard conditions'}</span> as the primary reasons for current crowd density."
                 </p>
                 <div className="mt-4 flex items-center gap-2 opacity-20 group-hover:opacity-100 transition-opacity">
                     <div className="w-1 h-1 rounded-full bg-primary" />
                     <div className="w-8 h-[1px] bg-white/10" />
-                    <span className="text-[8px] font-black text-white/20 uppercase tracking-widest">Neural Reasoner v4.2</span>
+                    <span className="text-[8px] font-black text-white/20 uppercase tracking-widest">Smart Reasoner v4.2</span>
                 </div>
              </div>
         </div>

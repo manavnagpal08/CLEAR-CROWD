@@ -63,7 +63,7 @@ export const Header = () => {
             </h1>
             <div className="hidden sm:flex items-center gap-2 mt-1">
                <span className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse shadow-[0_0_10px_rgba(0,255,156,0.8)]" />
-               <p className="text-[10px] text-white/30 uppercase font-black tracking-[0.5em]">Neural Grid Active</p>
+               <p className="text-[10px] text-white/30 uppercase font-black tracking-[0.5em]">AI Assistant Live</p>
             </div>
           </div>
         </motion.div>
@@ -83,7 +83,7 @@ export const Header = () => {
               className={`flex items-center gap-2 px-6 py-2.5 rounded-2xl transition-all duration-300 font-black uppercase text-[10px] tracking-widest border ${showCitySwitcher ? 'bg-primary/10 border-primary/40 text-primary shadow-[0_0_20px_rgba(0,194,255,0.2)]' : 'bg-transparent border-white/5 text-white/40 hover:bg-white/5 hover:text-white'}`}
             >
               <Globe size={14} className={showCitySwitcher ? 'animate-spin-slow' : ''} />
-              Region Matrix
+              Switch City
               <ChevronDown size={12} className={`transition-transform duration-500 ${showCitySwitcher ? 'rotate-180' : ''}`} />
             </button>
             
@@ -131,7 +131,7 @@ export const Header = () => {
                className={`flex items-center gap-2 h-10 px-6 rounded-full font-black text-[10px] uppercase tracking-widest transition-all duration-500 ${showNeuralHub ? 'bg-secondary text-slate-950 shadow-[0_0_30px_rgba(0,255,156,0.4)]' : 'bg-white/5 text-white/40 hover:bg-white/10'}`}
              >
                 <Command size={14} className={showNeuralHub ? 'animate-pulse' : ''} />
-                Command Center
+                Control Hub
              </button>
              
              <AnimatePresence>
@@ -147,7 +147,7 @@ export const Header = () => {
                            <Activity size={24} />
                         </div>
                         <div>
-                           <h4 className="text-sm font-black text-white uppercase italic tracking-tighter">AI Tactical Overseer</h4>
+                           <h4 className="text-sm font-black text-white uppercase italic tracking-tighter">AI Decision Engine</h4>
                            <p className="text-[8px] text-white/30 uppercase font-black tracking-widest">Active System State: NOMINAL</p>
                         </div>
                      </div>
@@ -214,7 +214,7 @@ export const Header = () => {
         >
           <div className="hidden sm:flex items-center gap-4 md:gap-6 border-r border-white/10 pr-4 md:pr-6 mr-1 md:mr-2">
              <div className="flex flex-col items-end">
-                <span className="text-[8px] md:text-[10px] font-black text-primary uppercase tracking-[0.1em] md:tracking-[0.2em]">Neural Power</span>
+                <span className="text-[8px] md:text-[10px] font-black text-primary uppercase tracking-[0.1em] md:tracking-[0.2em]">Community Points</span>
                 <span className="text-base md:text-xl font-black text-white tabular-nums flex items-center gap-2 font-orbitron italic">
                    {userPoints}
                    <motion.span 

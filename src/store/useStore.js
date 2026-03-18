@@ -34,27 +34,34 @@ export const useStore = create(
       historySlider: 0, // for timeline slider
       avoidMode: false,
       searchQuery: '',
+      aiResponse: null, // { message, recommendation, route, timing }
+      isAiPrompting: false,
       
       // Gamification State
       userPoints: 0,
       reportsHistory: [],
       lastReportTimestamp: null,
+      
+      setAvoidMode: (val) => set({ avoidMode: val }),
+      setSearchQuery: (val) => set({ searchQuery: val }),
+      setAiResponse: (val) => set({ aiResponse: val }),
+      setIsAiPrompting: (val) => set({ isAiPrompting: val }),
 
       // Smart City Real-time Features
       notifications: [
         { 
           id: 'pre-1', 
-          title: 'Heavy Traffic: Silk Board Crossing', 
+          title: 'Traffic: Silk Board Junction', 
           type: 'warning', 
-          message: 'Unusual traffic congestion detected towards the main arterial road. Estimated delay: 15 mins.', 
+          message: 'Unusual traffic congestion detected. Estimated delay: 15 mins.', 
           read: false, 
           timestamp: new Date(Date.now() - 3600000).toISOString() 
         },
         { 
           id: 'pre-2', 
-          title: 'Public Gathering: Central Plaza', 
+          title: 'Central Plaza Event', 
           type: 'info', 
-          message: 'A planned gathering is increasing density in Sector 4. High load expected until 20:00.', 
+          message: 'Planned gathering increasing density. High load until 20:00.', 
           read: true, 
           timestamp: new Date(Date.now() - 7200000).toISOString() 
         },
