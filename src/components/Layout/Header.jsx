@@ -126,13 +126,13 @@ export const Header = () => {
           <NavButton active={activeTab === 'workflow'} onClick={() => setActiveTab('workflow')} icon={<Zap size={18} />} label="Architecture" />
           
           <div className="relative">
-             <button 
-               onClick={() => setShowNeuralHub(!showNeuralHub)}
-               className={`flex items-center gap-2 h-10 px-6 rounded-full font-black text-[10px] uppercase tracking-widest transition-all duration-500 ${showNeuralHub ? 'bg-secondary text-slate-950 shadow-[0_0_30px_rgba(0,255,156,0.4)]' : 'bg-white/5 text-white/40 hover:bg-white/10'}`}
-             >
-                <Command size={14} className={showNeuralHub ? 'animate-pulse' : ''} />
-                Control Hub
-             </button>
+              <button 
+                onClick={() => setShowNeuralHub(!showNeuralHub)}
+                className={`flex items-center gap-3 h-12 px-8 rounded-full font-black text-[11px] uppercase tracking-[0.2em] shadow-lg transition-all duration-500 ${showNeuralHub ? 'bg-secondary text-slate-950 shadow-[0_0_40px_rgba(0,255,156,0.5)]' : 'bg-white/5 text-white/40 hover:bg-white/10'}`}
+              >
+                 <Command size={16} className={showNeuralHub ? 'animate-pulse' : ''} />
+                 Control Hub
+              </button>
              
              <AnimatePresence>
                 {showNeuralHub && (
@@ -214,13 +214,17 @@ export const Header = () => {
         >
           <div className="hidden sm:flex items-center gap-4 md:gap-6 border-r border-white/10 pr-4 md:pr-6 mr-1 md:mr-2">
              <div className="flex flex-col items-end">
-                <span className="text-[8px] md:text-[10px] font-black text-primary uppercase tracking-[0.1em] md:tracking-[0.2em]">Community Points</span>
-                <span className="text-base md:text-xl font-black text-white tabular-nums flex items-center gap-2 font-orbitron italic">
-                   {userPoints}
+                <span className="text-[10px] md:text-[12px] font-black text-primary uppercase tracking-[0.2em]">Intel Credits</span>
+                <span className="text-2xl md:text-3xl font-black text-white tabular-nums flex items-center gap-2 font-orbitron italic text-outline-glow">
+                   {userPoints || 0}
                    <motion.span 
-                     animate={{ scale: [1, 1.3, 1], filter: ['brightness(1)', 'brightness(1.5)', 'brightness(1)'] }} 
-                     transition={{ repeat: Infinity, duration: 2 }}
-                     className="text-secondary text-xs md:text-sm"
+                     animate={{ 
+                       scale: [1, 1.4, 1], 
+                       filter: ['brightness(1)', 'brightness(2)', 'brightness(1)'],
+                       rotate: [0, 15, -15, 0]
+                     }} 
+                     transition={{ repeat: Infinity, duration: 1 }}
+                     className="text-secondary text-sm md:text-xl drop-shadow-[0_0_10px_#00FF9C]"
                    >
                      ⚡
                    </motion.span>

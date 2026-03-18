@@ -18,13 +18,19 @@ function App() {
 
   useEffect(() => {
     console.log("App.jsx: useEffect initializing auth and location");
-    initAuth();
+    const unsubscribe = initAuth();
     updateUserLocation();
+    
+    // Safety timer to clear splash screen
     const timer = setTimeout(() => {
       console.log("App.jsx: Splash screen timer finished");
       setIsStarting(false);
-    }, 2800);
-    return () => clearTimeout(timer);
+    }, 2500);
+    
+    return () => {
+      clearTimeout(timer);
+      if (typeof unsubscribe === 'function') unsubscribe();
+    };
   }, [initAuth, updateUserLocation]);
 
   console.log("App.jsx: Render state", { isStarting, isAuthenticated, activeTab });

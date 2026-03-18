@@ -27,12 +27,14 @@ export const ReportCrowdButton = ({ locationId }) => {
     <div className="relative">
       <motion.button
         onClick={() => setIsExpanded(!isExpanded)}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className="w-full h-14 bg-primary/10 border border-primary/30 rounded-2xl flex items-center justify-center gap-3 text-primary font-black uppercase tracking-widest hover:bg-primary/20 transition-all group"
+        whileHover={{ scale: 1.02, backgroundColor: 'rgba(0, 194, 255, 0.2)' }}
+        whileTap={{ scale: 0.98 }}
+        className="flex-1 h-16 bg-primary/10 border border-primary/30 rounded-3xl flex items-center justify-center gap-4 text-primary font-black uppercase tracking-[0.2em] transition-all group relative overflow-hidden"
       >
-        <Zap size={20} className="group-hover:animate-pulse" />
-        Report Density
+        <div className="absolute inset-0 bg-primary/5 animate-pulse opacity-30" />
+        <Zap size={20} className="group-hover:animate-bounce relative z-10" />
+        <span className="relative z-10 text-[10px]">Report Area</span>
+        <Badge variant="secondary" className="ml-2 bg-secondary text-slate-950 border-none px-2 py-0.5 text-[9px] relative z-10 tracking-tighter shadow-lg font-black italic">+10 PTS</Badge>
       </motion.button>
 
       <AnimatePresence>

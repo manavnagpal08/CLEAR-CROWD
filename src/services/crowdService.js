@@ -66,6 +66,24 @@ const REAL_LANDMARKS = [
   { name: 'Chennai Central', lat: 13.0827, lng: 80.2707, type: 'metro' },
   { name: 'Anna Salai', lat: 13.0617, lng: 80.2600, type: 'traffic' },
   { name: 'Spencer Plaza', lat: 13.0640, lng: 80.2608, type: 'shopping' },
+  { name: 'Anekal Satellite Hub', lat: 12.7100, lng: 77.7000, type: 'traffic' },
+  { name: 'Electronic City Toll', lat: 12.8400, lng: 77.6700, type: 'traffic' },
+  { name: 'Whitefield IT Sector', lat: 12.9698, lng: 77.7499, type: 'traffic' },
+  { name: 'Sarjapur Junction', lat: 12.9135, lng: 77.6740, type: 'traffic' },
+  { name: 'Kormangala 5th Block', lat: 12.9344, lng: 77.6192, type: 'food' },
+
+  // --- UNIVERSITIES & COLLEGES (BENGALURU) ---
+  { name: 'Alliance University (Anekal)', lat: 12.7233, lng: 77.7050, type: 'university' },
+  { name: 'Christ University (Main Campus)', lat: 12.9347, lng: 77.6062, type: 'university' },
+  { name: 'IISc Bangalore', lat: 13.0184, lng: 77.5674, type: 'university' },
+  { name: 'PES University (RR Campus)', lat: 12.9344, lng: 77.5345, type: 'university' },
+  { name: 'Jain University (Jayanagar)', lat: 12.9279, lng: 77.5818, type: 'university' },
+  { name: 'RV College of Engineering', lat: 12.9237, lng: 77.5002, type: 'university' },
+  { name: 'Alliance University (City Campus)', lat: 12.9100, lng: 77.6300, type: 'university' },
+  { name: 'MS Ramaiah Institute', lat: 13.0307, lng: 77.5649, type: 'university' },
+  { name: 'BMS College of Engineering', lat: 12.9410, lng: 77.5655, type: 'university' },
+  { name: 'Mount Carmel College', lat: 12.9918, lng: 77.5888, type: 'university' },
+  { name: 'St. Joseph’s University', lat: 12.9620, lng: 77.5977, type: 'university' },
 ];
 
 const calculateDensityForType = (type, hour) => {
@@ -93,6 +111,13 @@ const calculateDensityForType = (type, hour) => {
       // Peaks at 9-10 and 18-20
       if ((hour >= 8 && hour <= 10) || (hour >= 17 && hour <= 20)) density = 80 + Math.random() * 15;
       else density = 30 + Math.random() * 30;
+      break;
+    case 'university':
+      // Peaks morning (8:30-10:00), lunch (12:30-14:30), evening (16:30-18:30)
+      if ((hour >= 8 && hour <= 10) || (hour >= 12 && hour <= 14) || (hour >= 16 && hour <= 18)) density = 75 + Math.random() * 20;
+      else if (hour > 10 && hour < 12) density = 45 + Math.random() * 15;
+      else if (hour > 18 && hour < 22) density = 30 + Math.random() * 20;
+      else density = 5 + Math.random() * 10;
       break;
     default:
       density = 20 + Math.random() * 40;

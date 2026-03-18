@@ -180,7 +180,13 @@ export const useStore = create(
 
       logout: async () => {
         await signOut(auth);
-        set({ user: null, isAuthenticated: false });
+        set({ 
+          user: null, 
+          isAuthenticated: false, 
+          userPoints: 0, 
+          reportsHistory: [],
+          communityReports: [] 
+        });
       },
 
       initAuth: () => {

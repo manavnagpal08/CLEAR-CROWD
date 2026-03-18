@@ -44,7 +44,7 @@ export const CrowdMap = () => {
     crowdData, communityReports, fetchCrowdData, setSelectedLocation, 
     selectedLocation, viewMode, setViewMode, historySlider, setHistorySlider, 
     userLocation, updateUserLocation, fetchCommunityReports, predictions, anomalies,
-    avoidMode, setAvoidMode, searchQuery, setSearchQuery
+    avoidMode, setAvoidMode, searchQuery, setSearchQuery, userPoints, getUserBadge
   } = useStore();
 
   const [hoveredLocation, setHoveredLocation] = useState(null);
@@ -264,11 +264,40 @@ export const CrowdMap = () => {
             >
               <div className="glass-premium p-8 rounded-[3rem] border border-white/5 flex flex-1 flex-col shadow-3xl bg-[#020408]/40 backdrop-blur-2xl">
                 <div className="flex items-center justify-between mb-8">
-                   <h4 className="text-xs font-black text-white uppercase tracking-[0.3em] font-orbitron italic text-primary">AI Assistant Hub</h4>
-                   <div className="flex items-center gap-1.5">
-                      <div className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse" />
-                      <span className="text-[8px] font-black text-secondary tracking-widest uppercase">Live Analysis</span>
+                   <div className="flex flex-col">
+                      <h4 className="text-xs font-black text-white uppercase tracking-[0.3em] font-orbitron italic text-primary">Crowd Command Hub</h4>
+                      <p className="text-[8px] font-black text-white/30 uppercase mt-1 tracking-widest">Sector Alert: {crowdData[0]?.name || 'Auto'}</p>
                    </div>
+                   <div className="flex items-center gap-1.5 bg-secondary/10 px-3 py-1.5 rounded-full border border-secondary/20">
+                      <div className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse" />
+                      <span className="text-[8px] font-black text-secondary tracking-widest uppercase italic font-black font-orbitron">Live Link</span>
+                   </div>
+                </div>
+
+                <div className="mb-10 p-5 rounded-[2.5rem] bg-white/[0.03] border border-white/5 shadow-inner relative overflow-hidden group/points overflow-hidden">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-primary/10 blur-3xl opacity-0 group-hover/points:opacity-100 transition-opacity" />
+                    
+                    <div className="flex justify-between items-end mb-4 relative z-10">
+                        <div>
+                            <span className="text-[9px] font-black text-white/20 uppercase tracking-[0.3em]">Grid Reputation</span>
+                            <div className="flex items-center gap-2 mt-1">
+                                <span className="text-3xl font-black text-white italic tracking-tighter font-orbitron">{useStore.getState().userPoints}</span>
+                                <span className="text-secondary text-base">⚡</span>
+                            </div>
+                        </div>
+                        <div className="flex flex-col items-end">
+                            <Badge variant="info" className="bg-primary/20 text-primary border-primary/30 uppercase text-[8px] px-2 py-0.5 mb-1 italic font-black">{getUserBadge().label}</Badge>
+                            <span className="text-[8px] font-black text-white/20 uppercase tracking-widest italic">{500 - (useStore.getState().userPoints % 500)} to next rank</span>
+                        </div>
+                    </div>
+                    
+                    <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden border border-white/5 p-[1px] relative z-10">
+                        <motion.div 
+                            initial={{ width: 0 }}
+                            animate={{ width: `${(useStore.getState().userPoints % 500) / 5}%` }}
+                            className="h-full bg-gradient-to-r from-primary via-secondary to-primary rounded-full shadow-[0_0_15px_rgba(0,194,255,0.4)] animate-shimmer" 
+                        />
+                    </div>
                 </div>
 
                 <div className="space-y-6 flex-1">

@@ -80,6 +80,15 @@
     text-shadow: 0 0 10px currentColor;
   }
 
+  .text-glow-primary {
+    text-shadow: 0 0 20px rgba(0, 194, 255, 0.5);
+  }
+  
+  .text-outline-glow {
+    text-shadow: 0 0 10px rgba(0, 194, 255, 0.8), 0 0 20px rgba(0, 194, 255, 0.4);
+    -webkit-text-stroke: 0.5px rgba(255, 255, 255, 0.1);
+  }
+
   .cyber-shimmer {
     position: relative;
     overflow: hidden;

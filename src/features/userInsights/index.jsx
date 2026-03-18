@@ -5,17 +5,19 @@ import { BestTime } from './BestTime';
 import { WhyCrowd } from './WhyCrowd';
 import { Emergency } from './Emergency';
 import { EcoImpact } from './EcoImpact';
-import { Brain, Clock, Zap, Shield, Leaf } from 'lucide-react';
+import { GridFlow } from './GridFlow';
+import { Brain, Clock, Zap, Shield, Leaf, Activity } from 'lucide-react';
 
 export const UserInsightsPanel = () => {
     const [activeTab, setActiveTab] = useState('should-go');
 
     const tabs = [
-        { id: 'should-go', label: 'Should I Go?', icon: <Brain size={16} />, component: <ShouldGo /> },
-        { id: 'best-time', label: 'Best Time', icon: <Clock size={16} />, component: <BestTime /> },
-        { id: 'why', label: 'Why Crowded?', icon: <Zap size={16} />, component: <WhyCrowd /> },
-        { id: 'emergency', label: 'Safety', icon: <Shield size={16} />, component: <Emergency /> },
-        { id: 'eco', label: 'Impact', icon: <Leaf size={16} />, component: <EcoImpact /> },
+        { id: 'should-go', label: 'Go?', icon: <Brain size={16} />, component: <ShouldGo /> },
+        { id: 'grid-flow', label: 'Flow', icon: <Activity size={16} />, component: <GridFlow /> },
+        { id: 'best-time', label: 'Time', icon: <Clock size={16} />, component: <BestTime /> },
+        { id: 'why', label: 'Why?', icon: <Zap size={16} />, component: <WhyCrowd /> },
+        { id: 'emergency', label: 'Safe', icon: <Shield size={16} />, component: <Emergency /> },
+        { id: 'eco', label: 'Eco', icon: <Leaf size={16} />, component: <EcoImpact /> },
     ];
 
     return (
