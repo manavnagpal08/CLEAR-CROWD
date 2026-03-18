@@ -43,20 +43,16 @@ export const CrowdMap = () => {
   const { 
     crowdData, communityReports, fetchCrowdData, setSelectedLocation, 
     selectedLocation, viewMode, setViewMode, historySlider, setHistorySlider, 
-    userLocation, updateUserLocation, fetchCommunityReports, predictions, anomalies
+    userLocation, updateUserLocation, fetchCommunityReports, predictions, anomalies,
+    avoidMode, setAvoidMode, searchQuery, setSearchQuery
   } = useStore();
-  console.log("CrowdMap: Rendering", { 
-    crowdDataLength: crowdData?.length, 
-    selectedLocationId: selectedLocation?.id,
-    userLocation: userLocation
-  });
 
   const [hoveredLocation, setHoveredLocation] = useState(null);
   const [isCommunityOpen, setIsCommunityOpen] = useState(false);
   const [mapLayer, setMapLayer] = useState('standard'); // 'standard' | 'heatmap' | 'security'
+  const [isFeatureHubOpen, setIsFeatureHubOpen] = useState(true);
 
   useEffect(() => {
-    console.log("CrowdMap: Initializing location and reports");
     updateUserLocation();
     fetchCommunityReports();
     const interval = setInterval(() => {
@@ -65,6 +61,17 @@ export const CrowdMap = () => {
     }, 15000);
     return () => clearInterval(interval);
   }, []);
+
+  const filteredData = useMemo(() => {
+    let data = crowdData;
+    if (searchQuery) {
+      data = data.filter(loc => loc.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    }
+    if (avoidMode) {
+      data = data.filter(loc => loc.density < 55);
+    }
+    return data;
+  }, [crowdData, searchQuery, avoidMode]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -80,454 +87,444 @@ export const CrowdMap = () => {
   };
 
   return (
-    <div className="relative w-full h-full bg-[#04060A] overflow-hidden flex items-center justify-center p-4">
-      {/* Real City Map Container */}
+    <div className="relative w-full h-full bg-[#020408] overflow-hidden flex items-center justify-center p-2 md:p-6 lg:p-8">
+      {/* Search Bar - Global Uplink */}
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="absolute top-10 left-1/2 -translate-x-1/2 z-[2000] w-full max-w-xl px-4"
+      >
+        <div className="glass-premium h-16 rounded-full flex items-center px-6 gap-4 border-white/10 group focus-within:border-primary/50 transition-all shadow-[0_20px_50px_rgba(0,0,0,0.4)]">
+          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary group-focus-within:animate-pulse">
+            <MousePointer2 size={18} />
+          </div>
+          <input 
+            type="text"
+            placeholder="Search city sectors, landmarks..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="flex-1 bg-transparent border-none outline-none text-sm font-bold text-white placeholder:text-white/20 uppercase tracking-widest"
+          />
+          <Badge variant="info" className="hidden sm:block text-[8px] bg-white/5 border-white/10">Neural Search</Badge>
+        </div>
+      </motion.div>
+
+      {/* Main Map Core */}
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1, ease: "circOut" }}
-        className="relative w-full h-[90vh] rounded-[3.5rem] border border-white/5 overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.8)] glass-panel"
+        className="relative w-full h-full rounded-[3rem] lg:rounded-[4.5rem] border border-white/5 overflow-hidden shadow-[0_50px_150px_rgba(0,0,0,1)] glass-premium"
       >
         <MapContainer 
           center={[userLocation.lat, userLocation.lng]} 
           zoom={14} 
-          style={{ width: '100%', height: '100%', background: '#04060A' }}
+          style={{ width: '100%', height: '100%', background: '#020408', zIndex: 1 }}
           zoomControl={false}
           attributionControl={false}
         >
           <TileLayer
             url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
             subdomains="abcd"
+            opacity={0.9}
           />
-          {/* Prediction Mode Selector (Moved for better UX) */}
-          <div className="absolute top-10 left-1/2 -translate-x-1/2 z-[1000] flex gap-3 p-1.5 glass-panel rounded-full border border-white/5 bg-[#0A0F19]/60">
-             {['live', '30m', '60m'].map(mode => (
-               <button 
-                 key={mode}
-                 onClick={() => setViewMode(mode)}
-                 className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
-                   viewMode === mode 
-                    ? 'bg-primary text-slate-950' 
-                    : 'text-white/30 hover:text-white'
-                 }`}
-               >
-                 {mode === 'live' ? 'Dynamic' : mode}
-               </button>
-             ))}
-          </div>
-
+          
           <MapController />
 
-          {/* User Marker with Pulse */}
+          {/* User Marker with Gradient Pulse */}
           <CircleMarker 
             center={[userLocation.lat, userLocation.lng]} 
-            radius={8} 
-            pathOptions={{ color: '#00C2FF', fillColor: '#00C2FF', fillOpacity: 0.8, weight: 2 }}
-          >
-             <Popup>Commander's Signal</Popup>
-          </CircleMarker>
+            radius={10} 
+            pathOptions={{ color: '#00C2FF', fillColor: '#00C2FF', fillOpacity: 0.9, weight: 3 }}
+          />
           <CircleMarker 
             center={[userLocation.lat, userLocation.lng]} 
-            radius={20} 
-            pathOptions={{ color: '#00C2FF', fillOpacity: 0.1, weight: 1, dashArray: '5, 5' }}
+            radius={25} 
+            pathOptions={{ color: '#00C2FF', fillOpacity: 0.1, weight: 1.5, dashArray: '8, 8', className: 'animate-spin-slow' }}
           />
 
-          {/* Crowd Heatmap Nodes */}
-          {/* Crowd Heatmap Nodes */}
-          {crowdData.filter(loc => {
-            if (mapLayer === 'security') return loc.density > 60 || anomalies.some(a => a.locationId === loc.id);
-            if (mapLayer === 'heatmap') return loc.density > 20;
-            return true;
-          }).map((loc) => {
-             const isAnomaly = anomalies.some(a => a.locationId === loc.id);
-             return (
-               <HeatmapNode 
-                  key={loc.id} 
-                  location={loc} 
-                  isSelected={selectedLocation?.id === loc.id}
-                  isAnomaly={isAnomaly}
-                  mapLayer={mapLayer}
-                  onClick={() => setSelectedLocation(loc)}
-                  onHover={() => setHoveredLocation(loc)}
-                  onLeave={() => setHoveredLocation(null)}
-               />
-             );
-          })}
+          {/* Crowd Heatmap Layers */}
+          {filteredData.map((loc) => (
+             <HeatmapNode 
+                key={loc.id} 
+                location={loc} 
+                isSelected={selectedLocation?.id === loc.id}
+                isAnomaly={anomalies.some(a => a.locationId === loc.id)}
+                mapLayer={mapLayer}
+                onClick={() => setSelectedLocation(loc)}
+                onHover={() => setHoveredLocation(loc)}
+                onLeave={() => setHoveredLocation(null)}
+             />
+          ))}
 
+          {/* Reports & Incidents */}
           {communityReports.map((report, i) => (
              <CircleMarker 
                 key={`report-${i}`}
                 center={[report.lat, report.lng]} 
-                radius={report.type === 'emergency' ? 30 : 14} 
+                radius={report.type === 'emergency' ? 35 : 18} 
                 pathOptions={{ 
-                  color: report.type === 'emergency' ? '#EF4444' : '#00FF9C', 
-                  fillColor: report.type === 'emergency' ? '#EF4444' : '#00FF9C',
-                  fillOpacity: report.type === 'emergency' ? 0.4 : 0.3, 
-                  weight: report.type === 'emergency' ? 4 : 2, 
-                  dashArray: report.type === 'emergency' ? '10, 10' : '4, 4',
-                  className: report.type === 'emergency' ? 'animate-pulse' : ''
+                  color: report.type === 'emergency' ? '#FF3B3B' : '#00FF9C', 
+                  fillColor: report.type === 'emergency' ? '#FF3B3B' : '#00FF9C',
+                  fillOpacity: report.type === 'emergency' ? 0.5 : 0.3, 
+                  weight: 4, 
+                  className: report.type === 'emergency' ? 'animate-pulse blur-[1px]' : 'blur-[0.5px]'
                 }}
-             >
-                <Popup>
-                   <div className="p-3">
-                      <div className="flex items-center gap-2 mb-2">
-                         <div className={`w-2 h-2 rounded-full animate-pulse ${report.type === 'emergency' ? 'bg-red-500' : 'bg-secondary'}`} />
-                         <span className={`text-[10px] font-black uppercase tracking-widest ${report.type === 'emergency' ? 'text-red-500' : 'text-secondary'}`}>
-                           {report.type === 'emergency' ? 'CRITICAL SOS' : 'Global Intel'}
-                         </span>
-                      </div>
-                      <p className="text-xs font-bold leading-relaxed">{report.text}</p>
-                   </div>
-                </Popup>
-             </CircleMarker>
+             />
           ))}
         </MapContainer>
 
+        {/* Tactical UI Panels */}
+        
+        {/* Top Control Strip */}
+        <div className="absolute top-10 left-10 right-10 flex justify-between items-start z-[1500] pointer-events-none">
+          <motion.div variants={itemVariants} className="pointer-events-auto flex flex-col gap-4">
+             {/* Mode Selector */}
+             <div className="flex bg-[#0A0F19]/60 p-1.5 glass-panel rounded-full border border-white/10 shadow-3xl">
+                {['live', '30m', '60m'].map(mode => (
+                  <button 
+                    key={mode}
+                    onClick={() => setViewMode(mode)}
+                    className={`px-8 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-500 ${
+                      viewMode === mode 
+                       ? 'bg-primary text-slate-950 shadow-[0_0_20px_rgba(0,194,255,0.4)]' 
+                       : 'text-white/20 hover:text-white/60'
+                    }`}
+                  >
+                    {mode === 'live' ? 'Now' : `+${mode}`}
+                  </button>
+                ))}
+             </div>
+
+             {/* City Selector */}
+             <div className="glass-panel p-1.5 md:p-2 rounded-[1.2rem] md:rounded-[1.5rem] flex flex-col gap-1.5 md:gap-2 border border-white/10 shadow-2xl bg-[#0A0F19]/40 backdrop-blur-3xl">
+                <span className="text-[7px] md:text-[8px] font-black text-white/20 uppercase tracking-[0.2em] ml-2 mt-1">Active Sectors</span>
+                <div className="flex gap-1.5 md:gap-2 overflow-x-auto no-scrollbar pb-1">
+                  {[
+                    { name: 'BLR', lat: 12.9716, lng: 77.5946 },
+                    { name: 'DEL', lat: 28.6139, lng: 77.2090 },
+                    { name: 'PUN', lat: 18.5204, lng: 73.8567 },
+                    { name: 'CCU', lat: 22.5726, lng: 88.3639 },
+                    { name: 'MAA', lat: 13.0827, lng: 80.2707 }
+                  ].map(city => (
+                    <button 
+                      key={city.name}
+                      onClick={() => useStore.setState({ userLocation: { lat: city.lat, lng: city.lng } })}
+                      className="px-3 py-1.5 md:px-4 md:py-2 rounded-xl md:rounded-2xl text-[9px] md:text-[10px] font-black text-white/40 hover:text-primary hover:bg-primary/10 transition-all border border-transparent hover:border-primary/20 shrink-0 uppercase"
+                    >
+                      {city.name}
+                    </button>
+                  ))}
+                </div>
+             </div>
+          </motion.div>
+
+          <motion.div variants={itemVariants} className="pointer-events-auto flex flex-col gap-4 items-end">
+             {/* Layer Controls */}
+             <div className="flex bg-[#0A0F19]/60 p-1.5 glass-panel rounded-full border border-white/10 shadow-3xl gap-1">
+                {['standard', 'heatmap', 'security'].map(layer => (
+                  <button 
+                    key={layer}
+                    onClick={() => setMapLayer(layer)}
+                    className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500 ${
+                      mapLayer === layer 
+                       ? 'bg-secondary text-slate-950 shadow-[0_0_20px_rgba(0,255,156,0.4)]' 
+                       : 'text-white/30 hover:text-white hover:bg-white/5'
+                    }`}
+                  >
+                    {layer === 'standard' && <MapIcon size={18} />}
+                    {layer === 'heatmap' && <Activity size={18} />}
+                    {layer === 'security' && <Shield size={18} />}
+                  </button>
+                ))}
+             </div>
+          </motion.div>
+        </div>
+
+        {/* Global Hub Panel - Left Floating */}
         <AnimatePresence>
-          {communityReports.some(r => r.type === 'emergency') && (
+          {isFeatureHubOpen && (
             <motion.div 
-              initial={{ y: -100, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -100, opacity: 0 }}
-              className="absolute top-0 left-0 right-0 z-[2000] bg-red-600/90 backdrop-blur-md px-4 md:px-12 py-3 border-b border-red-500/50 flex items-center justify-between"
+              initial={{ x: -100, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -100, opacity: 0 }}
+              className="absolute left-10 top-32 bottom-32 w-80 z-[1500] pointer-events-auto hidden xl:flex flex-col gap-6"
             >
-               <div className="flex items-center gap-3 md:gap-6">
-                  <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/20 flex items-center justify-center text-white animate-pulse shrink-0">
-                     <Zap className="w-4 h-4 md:w-5 md:h-5" />
+              <div className="glass-premium p-8 rounded-[3rem] border-white/5 flex flex-1 flex-col shadow-3xl">
+                <div className="flex items-center justify-between mb-8">
+                   <h4 className="text-xs font-black text-white uppercase tracking-[0.3em] font-orbitron italic">Control Hub</h4>
+                   <div className="flex items-center gap-1.5">
+                      <div className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse" />
+                      <span className="text-[8px] font-black text-secondary tracking-widest uppercase">Sync Active</span>
+                   </div>
+                </div>
+
+                <div className="space-y-6 flex-1">
+                  {/* Avoid Mode Toggle */}
+                  <div className="p-5 rounded-3xl bg-white/5 border border-white/5 group hover:border-primary/30 transition-all cursor-pointer" onClick={() => setAvoidMode(!avoidMode)}>
+                    <div className="flex items-center justify-between mb-4">
+                       <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                          <Bot size={20} />
+                       </div>
+                       <div className={`w-10 h-5 rounded-full p-1 transition-colors ${avoidMode ? 'bg-primary' : 'bg-white/10'}`}>
+                          <div className={`w-3 h-3 bg-white rounded-full transition-transform ${avoidMode ? 'translate-x-5' : 'translate-x-0'}`} />
+                       </div>
+                    </div>
+                    <span className="text-[10px] font-black text-white uppercase tracking-widest">Tactical Avoidance</span>
+                    <p className="text-[8px] text-white/30 uppercase mt-1">Hiding High Density Sectors</p>
                   </div>
-                  <div className="min-w-0">
-                     <h5 className="text-[10px] md:text-sm font-black text-white uppercase tracking-widest truncate">Active SOS Emergency</h5>
-                     <p className="text-[8px] md:text-[10px] text-white/70 font-bold truncate">Sector incident reported. AVOID AREA.</p>
+
+                  {/* Regional Status Grid */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="p-4 rounded-3xl bg-white/[0.02] border border-white/5">
+                       <span className="text-[8px] font-black text-white/20 uppercase tracking-widest block mb-1">City Safety</span>
+                       <span className="text-sm font-black text-secondary">Optimal</span>
+                    </div>
+                    <div className="p-4 rounded-3xl bg-white/[0.02] border border-white/5">
+                       <span className="text-[8px] font-black text-white/20 uppercase tracking-widest block mb-1">Network</span>
+                       <span className="text-sm font-black text-primary italic leading-none">M-LINK</span>
+                    </div>
                   </div>
-               </div>
-               <Badge variant="danger" className="bg-white text-red-600 font-black border-none animate-bounce shrink-0 text-[10px]">PRIORITY 1</Badge>
+
+                  {/* Quick Comms */}
+                  <div className="space-y-3 pt-6 border-t border-white/5">
+                    <button className="w-full h-12 bg-white/5 rounded-2xl flex items-center px-6 gap-4 group hover:bg-primary hover:text-slate-950 transition-all">
+                       <Activity size={16} className="text-primary group-hover:text-slate-950" />
+                       <span className="text-[9px] font-black uppercase tracking-widest">Grid Pulse</span>
+                    </button>
+                    <button className="w-full h-12 bg-white/5 rounded-2xl flex items-center px-6 gap-4 group hover:bg-secondary hover:text-slate-950 transition-all">
+                       <Navigation size={16} className="text-secondary group-hover:text-slate-950" />
+                       <span className="text-[9px] font-black uppercase tracking-widest">Optimal Path</span>
+                    </button>
+                    <button 
+                       onClick={() => setIsCommunityOpen(true)}
+                       className="w-full h-12 bg-white/5 rounded-2xl flex items-center px-6 gap-4 group hover:bg-white hover:text-slate-950 transition-all">
+                       <MessageSquare size={16} className="text-white/40 group-hover:text-slate-950" />
+                       <span className="text-[9px] font-black uppercase tracking-widest">Intel Feed</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="mt-8 flex items-center gap-4">
+                   <div className="flex -space-x-3">
+                      {[1,2,3].map(i => <div key={i} className="w-8 h-8 rounded-full border-2 border-[#0A0F19] bg-white/10" />)}
+                   </div>
+                   <span className="text-[9px] font-black text-white/30 uppercase tracking-widest">42 Active Commanders</span>
+                </div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Map UI Navigation Overlay */}
+        {/* Timeline Slider HUD - Floor Level */}
         <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="absolute top-4 left-4 md:top-10 md:left-10 z-[1000] space-y-4 md:space-y-6 max-w-[calc(100vw-32px)]"
+          initial={{ y: 150 }}
+          animate={{ y: 0 }}
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 z-[1500] w-full max-w-5xl px-10"
         >
-          <motion.div variants={itemVariants} className="glass-panel p-1.5 md:p-2 rounded-[1.2rem] md:rounded-[1.5rem] flex flex-col gap-1.5 md:gap-2 border border-white/10 shadow-2xl bg-[#0A0F19]/40 backdrop-blur-3xl">
-             <span className="text-[7px] md:text-[8px] font-black text-white/20 uppercase tracking-[0.2em] ml-2 mt-1">Tactical Layers</span>
-             <div className="flex gap-1.5 md:gap-2 overflow-x-auto no-scrollbar pb-0.5 md:pb-0">
-               {['standard', 'heatmap', 'security'].map(layer => (
-                 <button 
-                   key={layer}
-                   onClick={() => setMapLayer(layer)}
-                   className={`px-3 py-1.5 md:px-4 md:py-2 rounded-xl md:rounded-2xl text-[8px] md:text-[9px] font-black uppercase tracking-tighter transition-all duration-500 flex items-center gap-1.5 md:gap-2 shrink-0 ${
-                     mapLayer === layer 
-                      ? 'bg-secondary text-slate-950 shadow-[0_0_20px_rgba(0,255,156,0.4)]' 
-                      : 'text-white/30 hover:text-white'
-                   }`}
-                 >
-                   {layer === 'standard' && <MapIcon className="w-2.5 h-2.5 md:w-3 md:h-3" />}
-                   {layer === 'heatmap' && <Activity className="w-2.5 h-2.5 md:w-3 md:h-3" />}
-                   {layer === 'security' && <Shield className="w-2.5 h-2.5 md:w-3 md:h-3" />}
-                   {layer}
-                 </button>
-               ))}
+          <div className="glass-premium p-8 rounded-[3.5rem] border-white/5 flex items-center gap-10 shadow-3xl">
+             <div className="flex flex-col items-start min-w-[120px]">
+                <span className="text-[9px] font-black text-white/20 uppercase tracking-[0.4em] mb-2">Neural Prediction</span>
+                <div className="flex items-center gap-2">
+                   <div className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_10px_#00C2FF]" />
+                   <span className="text-2xl font-black text-white italic font-orbitron">{historySlider === 0 ? 'NOW' : `+${Math.round(historySlider * 0.6)} MIN`}</span>
+                </div>
              </div>
-          </motion.div>
 
-          <motion.div variants={itemVariants} className="glass-panel p-1.5 md:p-2 rounded-[1.2rem] md:rounded-[1.5rem] flex flex-col gap-1.5 md:gap-2 border border-white/10 shadow-2xl bg-[#0A0F19]/40 backdrop-blur-3xl">
-             <span className="text-[7px] md:text-[8px] font-black text-white/20 uppercase tracking-[0.2em] ml-2 mt-1">Active Sectors</span>
-             <div className="flex gap-1.5 md:gap-2">
-               {[
-                 { name: 'BLR', lat: 12.9716, lng: 77.5946 },
-                 { name: 'DEL', lat: 28.6139, lng: 77.2090 },
-                 { name: 'PUN', lat: 18.5204, lng: 73.8567 }
-               ].map(city => (
-                 <button 
-                   key={city.name}
-                   onClick={() => useStore.setState({ userLocation: { lat: city.lat, lng: city.lng } })}
-                   className="px-3 py-1.5 md:px-4 md:py-2 rounded-xl md:rounded-2xl text-[9px] md:text-[10px] font-black text-white/40 hover:text-primary hover:bg-primary/10 transition-all border border-transparent hover:border-primary/20"
-                 >
-                   {city.name}
-                 </button>
-               ))}
+             <div className="flex-1 relative pb-6">
+                <div className="flex justify-between mb-4 px-2">
+                   <span className="text-[8px] font-black text-white/40 uppercase tracking-widest">Live Flow</span>
+                   <span className="text-[8px] font-black text-white/40 uppercase tracking-widest">Predicted Stability</span>
+                   <span className="text-[8px] font-black text-white/40 uppercase tracking-widest">Deep Forecast</span>
+                </div>
+                <div className="relative h-3 bg-white/5 rounded-full border border-white/5 overflow-hidden group">
+                   <input 
+                     type="range" 
+                     min="0" max="100" 
+                     value={historySlider}
+                     onChange={(e) => setHistorySlider(e.target.value)}
+                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                   />
+                   <div className="absolute top-0 bottom-0 bg-gradient-to-r from-primary animate-pulse" style={{ width: `${historySlider}%` }} />
+                   <div className="absolute top-0 bottom-0 left-0 right-0 glass-shimmer pointer-events-none" />
+                </div>
+                {/* Labels */}
+                <div className="absolute -bottom-1 left-0 right-0 flex justify-between px-1">
+                   {['Now', '+30 min', '+60 min'].map((label, i) => (
+                     <div key={i} className="flex flex-col items-center">
+                        <div className="w-px h-2 bg-white/10 mb-1" />
+                        <span className="text-[7px] font-black text-white/20 uppercase tracking-tighter">{label}</span>
+                     </div>
+                   ))}
+                </div>
              </div>
-          </motion.div>
 
-          <motion.button 
-            variants={itemVariants}
-            onClick={updateUserLocation}
-            className="w-10 h-10 md:w-14 md:h-14 glass-panel rounded-xl md:rounded-2xl border border-white/10 flex items-center justify-center text-white/40 hover:text-primary transition-all group shadow-2xl active:scale-90"
-          >
-             <Navigation className="w-4.5 h-4.5 md:w-5.5 md:h-5.5 group-hover:rotate-[360deg] transition-transform duration-700" />
-          </motion.button>
+             <div className="flex items-center gap-4 bg-white/5 p-4 rounded-3xl border border-white/10">
+                <Clock size={20} className="text-secondary" />
+                <div className="flex flex-col">
+                   <span className="text-[14px] font-black text-white font-orbitron tabular-nums leading-none">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                   <span className="text-[7px] font-black text-white/20 uppercase tracking-widest mt-1">Satellite Time</span>
+                </div>
+             </div>
+          </div>
         </motion.div>
 
-        {/* Community Floating Toggles */}
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="absolute top-4 right-4 md:top-10 md:right-10 z-[1000] flex flex-col gap-4 md:gap-6"
-        >
-           <motion.button 
-             variants={itemVariants}
-             onClick={() => setIsCommunityOpen(!isCommunityOpen)}
-             className="w-14 h-14 md:w-20 md:h-20 glass-panel rounded-[1.2rem] md:rounded-[2rem] border border-primary/30 flex flex-col items-center justify-center text-primary hover:bg-primary/10 transition-all group shadow-2xl relative overflow-hidden shrink-0"
+        {/* Global Floating Action Buttons */}
+        <div className="absolute right-10 top-1/2 -translate-y-1/2 z-[1500] flex flex-col gap-6">
+           <button 
+             onClick={updateUserLocation}
+             className="w-16 h-16 rounded-[2.2rem] glass-premium flex items-center justify-center text-primary border-primary/20 hover:bg-primary/10 transition-all hover:scale-110 shadow-3xl group"
            >
-              <div className="absolute inset-0 bg-primary/5 group-hover:bg-primary/10 transition-colors" />
-              <MessageSquare size={22} md:size={28} className="relative z-10 group-hover:scale-110 transition-transform" />
-              <span className="text-[7px] md:text-[9px] font-black uppercase mt-1 relative z-10">Intel</span>
-              {communityReports.length > 0 && (
-                 <div className="absolute top-2 right-2 md:top-3 md:right-3 w-2 h-2 md:w-3 md:h-3 bg-red-500 rounded-full border-2 border-[#04060A] animate-bounce" />
-              )}
-           </motion.button>
-           
-           <motion.button 
-             variants={itemVariants}
-             className="w-14 h-14 md:w-20 md:h-20 glass-panel rounded-[1.2rem] md:rounded-[2rem] border-white/10 flex flex-col items-center justify-center text-white/20 hover:text-white hover:border-white/30 transition-all shadow-2xl group shrink-0"
-            >
-               <HelpCircle size={20} md:size={26} className="group-hover:rotate-12 transition-transform" />
-               <span className="text-[7px] md:text-[9px] font-black uppercase mt-1">Guide</span>
-            </motion.button>
+              <Navigation size={24} className="group-hover:rotate-[360deg] transition-transform duration-700" />
+           </button>
+           <button 
+             onClick={() => setIsFeatureHubOpen(!isFeatureHubOpen)}
+             className={`w-16 h-16 rounded-[2.2rem] glass-premium flex items-center justify-center border-white/10 transition-all hover:scale-110 shadow-3xl group ${isFeatureHubOpen ? 'text-secondary' : 'text-white/30'}`}
+           >
+              <HelpCircle size={24} className="group-hover:rotate-12 transition-transform" />
+           </button>
+        </div>
 
-            <motion.button 
-              variants={itemVariants}
-              onClick={() => {
-                if (confirm("🚨 EMERGENCY SOS TACTICAL RESPONSE 🚨\n\nThis will instantly broadcast your coordinates to local Police and medical units. Are you sure you wish to trigger SOS?")) {
-                  useStore.getState().triggerSOS();
-                  import('sonner').then(({ toast }) => {
-                    toast.error("SOS SIGNAL BROADCASTED", {
-                      description: "Emergency units are tracking your signal. Stay in a safe zone.",
-                      duration: 10000,
-                    });
-                  });
-                }
-              }}
-              className="w-14 h-20 md:w-20 md:h-28 bg-red-600/20 border border-red-500/50 rounded-[1.8rem] md:rounded-[2.5rem] flex flex-col items-center justify-center text-red-500 hover:bg-red-600 hover:text-white transition-all shadow-[0_0_50px_rgba(239,68,68,0.4)] animate-pulse hover:animate-none group relative overflow-hidden shrink-0"
-            >
-               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/10 to-transparent -translate-y-full group-hover:animate-shimmer" />
-               <Zap className="relative z-10 group-hover:scale-125 transition-transform duration-500 w-6 h-6 md:w-8 md:h-8" />
-               <span className="text-[8px] md:text-[10px] font-black uppercase mt-2 relative z-10 tracking-[0.2em]">SOS</span>
-               <div className="absolute -bottom-2 w-10 md:w-12 h-1 bg-red-500 blur-md opacity-50" />
-            </motion.button>
-         </motion.div>
-
-        {/* Dynamic Timeline Slider */}
-        <motion.div 
-          initial={{ opacity: 0, y: 100 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 1 }}
-          className="absolute bottom-4 left-4 right-4 md:bottom-10 md:left-10 md:right-10 z-[1000] flex items-center gap-4 md:gap-8 px-6 md:px-12 py-4 md:py-6 glass-panel rounded-[2rem] md:rounded-[3rem] border border-white/10 group overflow-hidden"
-        >
-           <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-primary/5 opacity-50" />
-           <div className="relative flex items-center gap-4 shrink-0">
-              <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl md:rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-                 <Clock size={16} md:size={20} className="animate-pulse" />
-              </div>
-           </div>
-           
-           <div className="flex-1 relative h-2 md:h-3 bg-white/5 rounded-full border border-white/5">
-             <input 
-               type="range" 
-               min="0" max="100" 
-               value={historySlider}
-               onChange={(e) => setHistorySlider(e.target.value)}
-               className="absolute inset-0 w-full opacity-0 cursor-pointer h-full z-10"
-             />
-             <motion.div 
-               className="absolute top-0 bottom-0 bg-gradient-to-r from-primary/20 to-primary/60"
-               style={{ width: `${historySlider}%` }}
-             />
-             <motion.div 
-               className="absolute top-[-3px] md:top-[-4px] bottom-[-3px] md:bottom-[-4px] w-[2px] bg-primary shadow-[0_0_20px_#00C2FF]"
-               style={{ left: `${historySlider}%` }}
-             />
-           </div>
-           
-           <div className="relative flex flex-col items-end min-w-16 md:min-w-24 shrink-0">
-              <span className="text-[7px] md:text-[10px] font-black text-white/30 uppercase tracking-widest leading-none mb-1">Prediction</span>
-              <span className="text-sm md:text-xl font-black text-white tabular-nums italic leading-none">T - {Math.round((100 - historySlider)/2)}<span className="text-primary not-italic font-bold ml-0.5">M</span></span>
-           </div>
-        </motion.div>
-
-        {/* Tactical Status HUD */}
-        <motion.div 
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="absolute top-40 right-10 z-[1000] space-y-4 hidden xl:block"
-        >
-           <div className="glass-panel p-6 rounded-[2.5rem] border-white/5 bg-[#0A0F19]/60 backdrop-blur-xl w-64">
-              <div className="flex items-center justify-between mb-4">
-                 <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">Neural Health</span>
-                 <Activity size={12} className="text-primary animate-pulse" />
-              </div>
-              <div className="space-y-3">
-                 <div>
-                    <div className="flex justify-between text-[9px] font-black text-white/40 uppercase mb-1">
-                       <span>Grid Stability</span>
-                       <span className="text-primary">99.4%</span>
-                    </div>
-                    <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                       <motion.div initial={{ width: 0 }} animate={{ width: '99.4%' }} className="h-full bg-primary shadow-[0_0_10px_#00C2FF]" />
-                    </div>
-                 </div>
-                 <div>
-                    <div className="flex justify-between text-[9px] font-black text-white/40 uppercase mb-1">
-                       <span>City Sentiment</span>
-                       <span className="text-secondary">Optimal</span>
-                    </div>
-                    <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                       <motion.div initial={{ width: 0 }} animate={{ width: '85%' }} className="h-full bg-secondary shadow-[0_0_10px_#00FF9C]" />
-                    </div>
-                 </div>
-              </div>
-              <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between">
-                 <div className="flex -space-x-2">
-                    {[1,2,3].map(i => (
-                       <div key={i} className="w-5 h-5 rounded-full bg-white/10 border border-[#0A0F19] flex items-center justify-center text-[8px] font-bold text-white/40">
-                          {i}
-                       </div>
-                    ))}
-                 </div>
-                 <span className="text-[8px] font-black text-white/20 uppercase tracking-widest">Global Sync Active</span>
-              </div>
-           </div>
-        </motion.div>
       </motion.div>
 
-      {/* Community Feed Sidebar */}
+      {/* Overlays */}
       <CommunityFeed isOpen={isCommunityOpen} onClose={() => setIsCommunityOpen(false)} />
-
-      {/* AI Assistant Chatbot */}
       <CrowdAssistant />
 
-      {/* Side Profile Insights */}
+      {/* Selected Node Interaction Panel */}
       <AnimatePresence>
         {selectedLocation && (
           <motion.div
-            initial={{ opacity: 0, x: -20, y: 100 }}
-            animate={{ opacity: 1, x: 0, y: 0 }}
-            exit={{ opacity: 0, x: -20, y: 100 }}
-            className="absolute left-0 right-0 bottom-0 md:left-12 md:top-1/2 md:-translate-y-1/2 md:bottom-auto z-[2000] p-4 md:p-0"
+            initial={{ x: 400, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: 400, opacity: 0 }}
+            className="absolute right-0 top-0 bottom-0 w-full sm:w-[500px] z-[3000] p-4 sm:p-10 pointer-events-none"
           >
-            <div className="w-full md:w-[400px] max-h-[70vh] md:max-h-[85vh] overflow-y-auto custom-scrollbar glass-premium p-6 md:p-8 rounded-t-[2.5rem] md:rounded-[3rem] border-primary/20 relative shadow-[0_-20px_50px_rgba(0,194,255,0.1)] md:shadow-[0_0_50px_rgba(0,194,255,0.1)] backdrop-blur-3xl bg-[#0A0F19]/90">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-[50px] -z-10 rounded-full" />
-              
-              {/* Mobile Drag Handle */}
-              <div className="w-12 h-1 bg-white/10 rounded-full mx-auto mb-6 md:hidden" />
-
-              <div className="flex justify-between items-start mb-6">
-                <div className="min-w-0 pr-4">
-                  <h3 className="text-xl md:text-2xl font-black text-white leading-tight tracking-tight truncate">{selectedLocation.name}</h3>
-                  <p className="text-[9px] md:text-[10px] uppercase tracking-widest text-primary font-black mt-1.5 md:mt-2 flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                    Live Area Intel
-                  </p>
-                </div>
-                <button 
-                  onClick={() => setSelectedLocation(null)}
-                  className="w-10 h-10 flex items-center justify-center rounded-[1.2rem] bg-white/5 hover:bg-white/10 transition-all text-white/40 border border-white/5 shrink-0"
-                >
-                   <span className="text-lg">✕</span>
-                </button>
-              </div>
-
-              <div className="space-y-6">
-                <div className="flex items-end gap-3 md:gap-4 px-1 md:px-2">
-                   <div className="flex flex-col">
-                     <span className="text-4xl md:text-6xl font-black text-white font-orbitron tracking-tighter tabular-nums drop-shadow-lg leading-none">{Math.round(selectedLocation.density)}%</span>
-                     <span className="text-[9px] md:text-[10px] text-white/30 uppercase font-black tracking-widest mt-1">Live Load</span>
+             <div className="h-full glass-premium pointer-events-auto rounded-[3.5rem] bg-[#0A0F19]/95 backdrop-blur-3xl border-primary/20 shadow-[-50px_0_100px_rgba(0,0,0,0.8)] overflow-y-auto custom-scrollbar p-10">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-[100px] -z-10 rounded-full" />
+                
+                <div className="flex items-start justify-between mb-12">
+                   <div className="pr-6">
+                      <div className="flex items-center gap-3 mb-2">
+                         <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                         <span className="text-[10px] font-black text-primary uppercase tracking-[0.4em]">Sector Profile Active</span>
+                      </div>
+                      <h3 className="text-4xl font-black text-white italic tracking-tighter uppercase font-orbitron leading-tight">{selectedLocation.name}</h3>
                    </div>
-                   <Badge variant={selectedLocation.density > 75 ? 'danger' : selectedLocation.density > 45 ? 'warning' : 'success'} className="mb-1 text-[8px] md:text-[9px] px-2 md:px-3 py-0.5 md:py-1">
-                     {selectedLocation.density > 75 ? 'CRITICAL' : selectedLocation.density > 45 ? 'ELEVATED' : 'STABLE'}
-                   </Badge>
+                   <button 
+                      onClick={() => setSelectedLocation(null)}
+                      className="w-14 h-14 rounded-full bg-white/5 hover:bg-red-500/10 hover:text-red-500 border border-white/5 flex items-center justify-center transition-all group"
+                   >
+                      <span className="text-xl group-hover:rotate-90 transition-transform">✕</span>
+                   </button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="p-3 md:p-4 rounded-2xl md:rounded-[1.5rem] bg-white/5 border border-white/5 cyber-shimmer relative overflow-hidden group">
-                    <span className="block text-[7px] md:text-[8px] text-white/40 font-black uppercase mb-1 tracking-widest">Peak Hours</span>
-                    <span className="text-[11px] md:text-xs font-bold text-secondary truncate block">{predictions?.peakHours || '17:00 - 19:30'}</span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-shimmer" />
-                  </div>
-                  <div className="p-3 md:p-4 rounded-2xl md:rounded-[1.5rem] bg-white/5 border border-white/5 cyber-shimmer relative overflow-hidden group">
-                    <span className="block text-[7px] md:text-[8px] text-white/40 font-black uppercase mb-1 tracking-widest">Occupancy</span>
-                    <span className="text-[11px] md:text-xs font-bold text-primary truncate block">{predictions?.occupancy?.current || 'Live'} / {predictions?.occupancy?.capacity || 'Max'}</span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-shimmer" />
-                  </div>
+                <div className="space-y-10">
+                   {/* Metrics Cluster */}
+                   <div className="flex items-center gap-8">
+                      <div className="flex flex-col">
+                         <span className="text-[70px] font-black text-white italic leading-none font-orbitron">{Math.round(selectedLocation.density)}%</span>
+                         <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em] mt-2">Saturation Level</span>
+                      </div>
+                      <div className="h-20 w-px bg-white/10" />
+                      <div className="space-y-2">
+                         <Badge variant={selectedLocation.density > 75 ? 'danger' : selectedLocation.density > 45 ? 'warning' : 'success'} className="px-5 py-2 text-[10px] font-black text-outline-glow">
+                            {selectedLocation.density > 75 ? 'SURGE ALERT' : selectedLocation.density > 45 ? 'ELEVATED' : 'STABLE NODE'}
+                         </Badge>
+                         <p className="text-[9px] font-black text-white/20 uppercase tracking-widest">{selectedLocation.type} Intelligence Sector</p>
+                      </div>
+                   </div>
+
+                   {/* Features Tabs Integration */}
+                   <UserInsightsPanel />
+
+                   {/* Quick Action Footer */}
+                   <div className="pt-10 flex gap-4">
+                      <ReportCrowdButton locationId={selectedLocation.id} />
+                      <button className="flex-1 h-16 bg-white/5 border border-white/10 rounded-3xl flex items-center justify-center gap-4 group hover:bg-white hover:text-slate-950 transition-all">
+                         <Navigation size={20} className="text-primary group-hover:text-slate-950" />
+                         <span className="text-xs font-black uppercase tracking-widest">Establish Link</span>
+                      </button>
+                   </div>
                 </div>
-
-                <div className="p-4 md:p-5 bg-white/[0.02] rounded-2xl md:rounded-[1.5rem] border border-white/5 hover:bg-white/[0.04] transition-all group">
-                   <p className="text-[9px] md:text-[10px] text-white/30 font-black mb-1.5 md:mb-2 flex items-center gap-2 tracking-[0.2em] uppercase">
-                     <Clock size={10} md:size={12} className="text-primary group-hover:rotate-90 transition-transform duration-500" /> Intelligence Note
-                   </p>
-                   <p className="text-[11px] md:text-xs text-white/70 leading-relaxed font-medium">
-                     {predictions?.explanation || `Sector [${selectedLocation.name}] is currently operating at ${Math.round(selectedLocation.density)}% capacity.`}
-                   </p>
-                </div>
-
-                <div className="flex justify-between items-center px-1 md:px-2 border-t border-white/5 pt-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-primary animate-pulse" />
-                    <span className="text-[7px] md:text-[8px] font-black text-white/30 uppercase tracking-[0.2em]">Sensors: {predictions?.liveSensors || 8} Active</span>
-                  </div>
-                  <span className="text-[7px] md:text-[8px] font-black text-white/30 uppercase tracking-[0.2em]">{predictions?.lastCheck || 'Just now'}</span>
-                </div>
-
-                <div className="pt-2 flex flex-col gap-3">
-                  <ReportCrowdButton locationId={selectedLocation.id} />
-
-                  <button className="w-full h-12 md:h-14 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 rounded-xl md:rounded-2xl flex items-center justify-center gap-3 text-xs md:text-sm font-bold text-white transition-all group cyber-shimmer">
-                     Establish Route <MapIcon size={14} md:size={16} className="text-white/40 group-hover:text-white transition-colors group-hover:scale-110" />
-                  </button>
-                </div>
-
-                {/* New Feature: User Insights Panel with Tabs */}
-                <UserInsightsPanel />
-              </div>
-            </div>
+             </div>
           </motion.div>
         )}
-      </AnimatePresence>
-    </div>
+      </AnimatePresence>    </div>
   );
 };
 
 const HeatmapNode = React.memo(({ location, onClick, onHover, onLeave, isSelected, isAnomaly, mapLayer }) => {
+  const d = location.density;
+  
+  // Advanced Intensity Color Scaling
   const color = 
-    location.density > 75 ? '#FF4D4D' : 
-    location.density > 45 ? '#FACC15' : 
-    '#00FF9C';
+    d > 80 ? '#FF0000' : // Deep Red
+    d > 60 ? '#FF5F00' : // High Orange
+    d > 45 ? '#FFB800' : // Amber
+    d > 25 ? '#00FF9C' : // Stable Green
+    '#00C2FF';           // Zero Blue
 
-  const radius = mapLayer === 'heatmap' ? 25 : (isSelected ? 14 : 10);
-  const opacity = mapLayer === 'heatmap' ? (location.density / 150) + 0.2 : (isSelected ? 0.9 : 0.6);
+  // Radial scaling based on density
+  const baseRadius = mapLayer === 'heatmap' ? 25 + (d / 4) : (isSelected ? 18 : 14);
+  const opacity = mapLayer === 'heatmap' ? (d / 120) + 0.1 : (isSelected ? 1 : 0.7);
 
   return (
     <>
       <AnimatePresence>
-        {(isAnomaly || (mapLayer === 'security' && location.density > 80)) && (
+        {(isAnomaly || (mapLayer === 'security' && d > 75)) && (
           <CircleMarker
             center={[location.lat, location.lng]}
-            radius={radius * 2}
+            radius={baseRadius * 2}
             pathOptions={{
-              color: '#FF4D4D',
-              fillColor: '#FF4D4D',
+              color: '#FF3B3B',
+              fillColor: '#FF3B3B',
               fillOpacity: 0.1,
-              weight: 1,
-              dashArray: '5,10',
+              weight: 2,
+              dashArray: '10,15',
               className: 'animate-pulse'
             }}
           />
         )}
       </AnimatePresence>
+
+      {mapLayer === 'heatmap' && (
+        <>
+          {/* Subtle Outer Glow */}
+          <CircleMarker
+            center={[location.lat, location.lng]}
+            radius={baseRadius * 1.6}
+            pathOptions={{
+              fillColor: color,
+              fillOpacity: opacity * 0.2,
+              stroke: false,
+              className: 'blur-[12px]'
+            }}
+          />
+          {/* Middle Transition */}
+          <CircleMarker
+            center={[location.lat, location.lng]}
+            radius={baseRadius * 1.2}
+            pathOptions={{
+              fillColor: color,
+              fillOpacity: opacity * 0.4,
+              stroke: false,
+              className: 'blur-[6px]'
+            }}
+          />
+        </>
+      )}
+
+      {/* Core Intelligence Node */}
       <CircleMarker
          center={[location.lat, location.lng]}
-         radius={radius}
+         radius={baseRadius}
          pathOptions={{ 
-           color: isSelected ? '#00C2FF' : (isAnomaly ? '#FF4D4D' : 'transparent'),
+           color: isSelected ? '#FFFFFF' : (isAnomaly ? '#FF3B3B' : 'transparent'),
            fillColor: color, 
            fillOpacity: opacity,
-           weight: isSelected || isAnomaly ? 3 : 0,
-           className: mapLayer === 'heatmap' ? 'blur-[2px]' : ''
+           weight: isSelected ? 3 : 0,
+           className: mapLayer === 'heatmap' ? 'blur-[1px]' : ''
          }}
          eventHandlers={{
            click: onClick,
@@ -536,13 +533,16 @@ const HeatmapNode = React.memo(({ location, onClick, onHover, onLeave, isSelecte
          }}
       >
          <Popup>
-           <div className="p-2 font-orbitron">
-             <h4 className="font-black text-xs uppercase tracking-tighter">{location.name}</h4>
-             <div className="h-1 w-full bg-white/10 rounded-full mt-1 mb-2 overflow-hidden">
-                <div className="h-full bg-primary" style={{ width: `${location.density}%` }} />
-             </div>
-             <p className="text-[10px] font-bold text-white/60">{Math.round(location.density)}% Density Detected</p>
-           </div>
+            <div className="p-4 bg-[#0A0F19]/90 backdrop-blur-xl border border-white/10 rounded-[1.5rem] w-48">
+              <h4 className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] mb-3">{location.name}</h4>
+              <div className="flex items-end gap-3 mb-4">
+                 <span className="text-3xl font-black text-white italic leading-none">{Math.round(location.density)}%</span>
+                 <Badge variant={location.density > 75 ? 'danger' : 'info'} className="text-[8px] px-2 py-0.5">LOAD</Badge>
+              </div>
+              <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                 <div className="h-full bg-primary shadow-[0_0_10px_#00C2FF]" style={{ width: `${location.density}%` }} />
+              </div>
+            </div>
          </Popup>
       </CircleMarker>
     </>

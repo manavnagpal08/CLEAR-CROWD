@@ -32,6 +32,8 @@ export const useStore = create(
       viewMode: 'live', // 'live' | '30m' | '60m'
       activeTab: 'map', // 'map' | 'admin' | 'alerts' | 'profile'
       historySlider: 0, // for timeline slider
+      avoidMode: false,
+      searchQuery: '',
       
       // Gamification State
       userPoints: 0,
@@ -274,6 +276,8 @@ export const useStore = create(
       setViewMode: (mode) => set({ viewMode: mode }),
       setActiveTab: (tab) => set({ activeTab: tab }),
       setHistorySlider: (val) => set({ historySlider: val }),
+      setAvoidMode: (val) => set({ avoidMode: val }),
+      setSearchQuery: (query) => set({ searchQuery: query }),
       
       updatePreferences: (newPrefs) => set((state) => ({ 
         preferences: { ...state.preferences, ...newPrefs } 
