@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Map as MapIcon, LayoutDashboard, Bell, LogOut, Settings, User, AlertTriangle, Info, CheckCircle2 } from 'lucide-react';
+import { Shield, Map as MapIcon, LayoutDashboard, Bell, LogOut, Settings, User, AlertTriangle, Info, CheckCircle2, Zap } from 'lucide-react';
 import { useStore } from '../../store/useStore';
 import { Button, Badge } from '../ui';
 import { toast } from 'sonner';
@@ -32,18 +32,18 @@ export const Header = () => {
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ type: "spring", damping: 20 }}
-          className="flex items-center gap-6 pointer-events-auto group cursor-pointer p-2 pr-6 glass-premium rounded-[2.5rem] border-primary/20 hover:bg-[#0A0F19]/80 transition-all duration-500 hover:shadow-[0_0_50px_rgba(0,194,255,0.2)]"
+          className="flex items-center gap-3 md:gap-6 pointer-events-auto group cursor-pointer p-1.5 md:p-2 pr-4 md:pr-6 glass-premium rounded-2xl md:rounded-[2.5rem] border-primary/20 hover:bg-[#0A0F19]/80 transition-all duration-500 hover:shadow-[0_0_50px_rgba(0,194,255,0.2)]"
           onClick={() => setActiveTab('map')}
         >
-          <div className="w-16 h-16 bg-primary rounded-[1.8rem] flex items-center justify-center shadow-[0_0_40px_rgba(0,194,255,0.4)] group-hover:scale-105 transition-all duration-500 relative overflow-hidden">
-            <div className="absolute inset-x-0 h-2 bg-white/40 blur-lg animate-scanLineMove opacity-30" />
-            <Shield className="text-[#020408] fill-[#020408] relative z-10" size={32} />
+          <div className="w-10 h-10 md:w-16 md:h-16 bg-primary rounded-xl md:rounded-[1.8rem] flex items-center justify-center shadow-[0_0_40px_rgba(0,194,255,0.4)] group-hover:scale-105 transition-all duration-500 relative overflow-hidden shrink-0">
+            <div className="absolute inset-x-0 h-1.5 md:h-2 bg-white/40 blur-lg animate-scanLineMove opacity-30" />
+            <Shield className="text-[#020408] fill-[#020408] relative z-10" size={20} md:size={32} />
           </div>
-          <div>
-            <h1 className="text-3xl font-black tracking-tighter text-white uppercase italic font-orbitron leading-none">
+          <div className="min-w-0">
+            <h1 className="text-xl md:text-3xl font-black tracking-tighter text-white uppercase italic font-orbitron leading-none truncate">
                CLEAR<span className="text-primary not-italic">CROWD</span>
             </h1>
-            <div className="flex items-center gap-2 mt-1">
+            <div className="hidden sm:flex items-center gap-2 mt-1">
                <span className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse shadow-[0_0_10px_rgba(0,255,156,0.8)]" />
                <p className="text-[10px] text-white/30 uppercase font-black tracking-[0.5em]">Neural Grid Active</p>
             </div>
@@ -90,17 +90,17 @@ export const Header = () => {
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ type: "spring", damping: 20 }}
-          className="flex items-center gap-6 pointer-events-auto glass-premium p-2 pl-8 rounded-[3rem] border-white/5 shadow-2xl"
+          className="flex items-center gap-3 md:gap-6 pointer-events-auto glass-premium p-1.5 md:p-2 pl-4 md:pl-8 rounded-2xl md:rounded-[3rem] border-white/5 shadow-2xl"
         >
-          <div className="flex items-center gap-6 border-r border-white/10 pr-6 mr-2">
+          <div className="hidden sm:flex items-center gap-4 md:gap-6 border-r border-white/10 pr-4 md:pr-6 mr-1 md:mr-2">
              <div className="flex flex-col items-end">
-                <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Neural Power</span>
-                <span className="text-xl font-black text-white tabular-nums flex items-center gap-2 font-orbitron italic">
+                <span className="text-[8px] md:text-[10px] font-black text-primary uppercase tracking-[0.1em] md:tracking-[0.2em]">Neural Power</span>
+                <span className="text-base md:text-xl font-black text-white tabular-nums flex items-center gap-2 font-orbitron italic">
                    {userPoints}
                    <motion.span 
                      animate={{ scale: [1, 1.3, 1], filter: ['brightness(1)', 'brightness(1.5)', 'brightness(1)'] }} 
                      transition={{ repeat: Infinity, duration: 2 }}
-                     className="text-secondary text-sm"
+                     className="text-secondary text-xs md:text-sm"
                    >
                      ⚡
                    </motion.span>
@@ -172,33 +172,33 @@ export const Header = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
              <div 
-               className="w-12 h-12 rounded-[1.2rem] glass-panel p-0.5 border-primary/30 bg-primary/10 hover:border-primary/60 transition-all cursor-pointer group cyber-glow-blue"
+               className="w-10 h-10 md:w-12 md:h-12 rounded-[1rem] md:rounded-[1.2rem] glass-panel p-0.5 border-primary/30 bg-primary/10 hover:border-primary/60 transition-all cursor-pointer group cyber-glow-blue"
                onClick={() => setActiveTab('profile')}
              >
                 <img 
                   src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name || 'Commander'}&backgroundColor=transparent&flip=true`} 
                   alt="User" 
-                  className="rounded-[1rem] group-hover:scale-110 transition-transform duration-500" 
+                  className="rounded-[0.8rem] md:rounded-[1rem] group-hover:scale-110 transition-transform duration-500" 
                 />
              </div>
              
-             <div className="h-8 w-px bg-white/10 mx-1 hidden sm:block" />
+             <div className="h-6 md:h-8 w-px bg-white/10 mx-0.5 md:mx-1 hidden sm:block" />
              
-             <button onClick={logout} className="w-12 h-12 rounded-[1.2rem] glass-panel border-red-500/20 items-center justify-center hover:bg-red-500/10 transition-all group flex">
-                <LogOut size={20} className="text-red-500/40 group-hover:text-red-500 group-hover:rotate-12 transition-all" />
+             <button onClick={logout} className="w-10 h-10 md:w-12 md:h-12 rounded-[1rem] md:rounded-[1.2rem] glass-panel border-red-500/20 items-center justify-center hover:bg-red-500/10 transition-all group flex shrink-0">
+                <LogOut size={16} md:size={20} className="text-red-500/40 group-hover:text-red-500 group-hover:rotate-12 transition-all" />
              </button>
           </div>
           
           <button 
-            className="lg:hidden w-12 h-12 rounded-[1.2rem] glass-panel flex items-center justify-center border-white/10"
+            className="lg:hidden w-10 h-10 md:w-12 md:h-12 rounded-[1rem] md:rounded-[1.2rem] glass-panel flex items-center justify-center border-white/10 shrink-0"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
-             <div className="space-y-1.5 w-6">
-                <div className={`h-0.5 bg-white transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`} />
+             <div className="space-y-1 w-5 md:w-6">
+                <div className={`h-0.5 bg-white transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`} />
                 <div className={`h-0.5 bg-white transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0' : 'w-2/3'}`} />
-                <div className={`h-0.5 bg-white transition-all duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+                <div className={`h-0.5 bg-white transition-all duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`} />
              </div>
           </button>
         </motion.div>
@@ -207,30 +207,61 @@ export const Header = () => {
       {/* Mobile Nav Overlay */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -40, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -40, scale: 0.9 }}
-            className="lg:hidden mt-8 glass-panel rounded-[3rem] p-8 border-white/10 shadow-[0_50px_100px_rgba(0,0,0,0.8)] space-y-4 max-w-sm mx-auto pointer-events-auto"
-          >
-            {[
-              { id: 'map', label: 'Tactical Map', icon: <MapIcon /> },
-              ...(user?.role === 'admin' ? [{ id: 'admin', label: 'City Intel', icon: <LayoutDashboard /> }] : []),
-              { id: 'workflow', label: 'System Logic', icon: <Zap /> },
-              { id: 'alerts', label: 'Active Alerts', icon: <Bell /> }
-            ].map((item) => (
-              <button 
-                key={item.id}
-                onClick={() => { setActiveTab(item.id); setIsMobileMenuOpen(false); }}
-                className={`w-full flex items-center gap-6 p-5 rounded-[2rem] transition-all group ${
-                  activeTab === item.id ? 'bg-primary text-[#04060A]' : 'bg-white/5 text-white/50 border border-white/5 hover:bg-white/10'
-                }`}
-              >
-                <div className="group-hover:scale-110 transition-transform">{item.icon}</div>
-                <span className="font-black text-lg uppercase tracking-tight italic">{item.label}</span>
-              </button>
-            ))}
-          </motion.div>
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="lg:hidden fixed inset-0 z-[4000] bg-[#0A0F19]/90 backdrop-blur-2xl"
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, x: 100, scale: 0.95 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: 100, scale: 0.95 }}
+              className="lg:hidden fixed right-6 top-24 left-6 z-[4001] glass-premium rounded-[2.5rem] p-8 border-white/10 shadow-[0_50px_100px_rgba(0,0,0,0.8)] space-y-4 pointer-events-auto overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-[50px] -z-10 rounded-full" />
+              
+              <div className="flex flex-col gap-3">
+                {[
+                  { id: 'map', label: 'Tactical Map', icon: <MapIcon size={20} /> },
+                  ...(user?.role === 'admin' ? [{ id: 'admin', label: 'City Intel', icon: <LayoutDashboard size={20} /> }] : []),
+                  { id: 'workflow', label: 'System Logic', icon: <Zap size={20} /> },
+                  { id: 'alerts', label: 'Active Alerts', icon: <Bell size={20} /> },
+                  { id: 'profile', label: 'User Profile', icon: <User size={20} /> }
+                ].map((item) => (
+                  <button 
+                    key={item.id}
+                    onClick={() => { setActiveTab(item.id); setIsMobileMenuOpen(false); }}
+                    className={`w-full flex items-center gap-4 p-5 rounded-2xl transition-all group relative overflow-hidden ${
+                      activeTab === item.id 
+                        ? 'bg-primary text-[#04060A] shadow-[0_0_30px_rgba(0,194,255,0.4)]' 
+                        : 'bg-white/5 text-white/50 border border-white/5 hover:bg-white/10'
+                    }`}
+                  >
+                    <div className="group-hover:scale-110 transition-transform relative z-10 shrink-0">
+                      {item.icon}
+                    </div>
+                    <span className="font-black text-sm uppercase tracking-widest italic font-orbitron relative z-10">{item.label}</span>
+                    
+                    {activeTab === item.id && (
+                      <div className="absolute inset-0 bg-white/10 animate-pulse" />
+                    )}
+                  </button>
+                ))}
+              </div>
+              
+              <div className="pt-4 border-t border-white/5">
+                <button 
+                  onClick={() => { logout(); setIsMobileMenuOpen(false); }}
+                  className="w-full h-14 rounded-2xl bg-red-500/10 text-red-500 flex items-center justify-center gap-3 font-black text-xs uppercase tracking-[0.2em] border border-red-500/20"
+                >
+                  <LogOut size={16} /> Terminate
+                </button>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </header>

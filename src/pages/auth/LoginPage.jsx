@@ -146,15 +146,15 @@ export const LoginPage = () => {
           animate={{ opacity: 1, scale: 1 }}
           className="w-full max-w-lg relative z-20"
         >
-          <div className="glass-premium p-12 lg:p-16 rounded-[4rem] border-white/5 shadow-[0_50px_100px_rgba(0,0,0,0.8)] cyber-shimmer group relative overflow-hidden">
+          <div className="glass-premium p-8 md:p-12 lg:p-16 rounded-[2.5rem] md:rounded-[4rem] border-white/5 shadow-[0_50px_100px_rgba(0,0,0,0.8)] cyber-shimmer group relative overflow-hidden">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
             
-            <div className="space-y-2 mb-12">
-               <Badge variant="info" className="mb-4 py-1.5 px-6 text-[10px] bg-primary/10 border-primary/20 animate-pulse text-glow">Secure Tactical Authorization</Badge>
-               <h2 className="text-6xl font-black tracking-tighter uppercase italic drop-shadow-2xl">
+            <div className="space-y-2 mb-8 md:mb-12">
+               <Badge variant="info" className="mb-4 py-1.5 px-6 text-[9px] md:text-[10px] bg-primary/10 border-primary/20 animate-pulse text-glow">Secure Tactical Authorization</Badge>
+               <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic drop-shadow-2xl font-orbitron">
                  {isLogin ? 'Access' : 'Deploy'}
                </h2>
-               <p className="text-white/40 font-medium tracking-tight">
+               <p className="text-white/40 text-sm font-medium tracking-tight">
                  {isLogin ? 'Initialize your neural handshake.' : 'Register your signature to the grid.'}
                </p>
             </div>

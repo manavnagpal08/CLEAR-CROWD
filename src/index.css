@@ -172,11 +172,20 @@
 
 @keyframes move-horizontal {
   0% { transform: translateX(-100%); }
-  100% { transform: translateX(500%); }
+  100% { transform: translateX(800%); }
 }
 
 .animate-move-horizontal {
   animation: move-horizontal 4s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-shimmer {
+  animation: shimmer 2.5s infinite;
 }
 
 .animate-float {

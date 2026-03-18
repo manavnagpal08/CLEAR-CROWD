@@ -44,18 +44,18 @@ export const AdminDashboard = () => {
   ];
 
   return (
-    <div className="h-full w-full bg-[#080B14] p-6 lg:p-12 overflow-y-auto custom-scrollbar">
+    <div className="h-full w-full bg-[#080B14] p-4 md:p-8 lg:p-12 overflow-y-auto custom-scrollbar">
       {/* Header with Glassmorphism */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-16 gap-6">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-8 md:mb-16 gap-6">
         <div>
-          <Badge variant="info" className="mb-4 tabular-nums animate-pulse">
+          <Badge variant="info" className="mb-4 tabular-nums animate-pulse text-[10px]">
              Authority Command Mode: Active
           </Badge>
-          <h1 className="text-5xl lg:text-7xl font-black text-white leading-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-7xl font-black text-white leading-tight font-orbitron">
             Force <span className="text-secondary italic">Control</span>
           </h1>
-          <p className="text-white/30 font-medium text-lg lg:text-xl mt-2 flex items-center gap-3">
-             <Radio size={20} className="text-secondary animate-pulse" /> Live tactical dispatch and grid management
+          <p className="text-white/30 font-medium text-sm md:text-lg lg:text-xl mt-2 flex items-center gap-3">
+             <Radio size={16} md:size={20} className="text-secondary animate-pulse" /> Live tactical dispatch and grid management
           </p>
         </div>
         <div className="flex gap-4 w-full lg:w-auto">
@@ -101,14 +101,14 @@ export const AdminDashboard = () => {
         <div className="lg:col-span-8 space-y-10">
           
           {/* AI Insights Panel */}
-          <div className="glass-panel p-10 rounded-[3.5rem] border-secondary/20 bg-secondary/5 relative overflow-hidden group">
-             <div className="flex items-center gap-4 mb-8">
-                <div className="w-12 h-12 rounded-2xl bg-secondary/20 flex items-center justify-center text-secondary border border-secondary/30">
-                  <Bot size={24} />
+          <div className="glass-panel p-6 md:p-10 rounded-[2rem] md:rounded-[3.5rem] border-secondary/20 bg-secondary/5 relative overflow-hidden group">
+             <div className="flex items-center gap-4 mb-6 md:mb-8">
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-secondary/20 flex items-center justify-center text-secondary border border-secondary/30 shrink-0">
+                  <Bot size={20} md:size={24} />
                 </div>
                 <div>
-                   <h3 className="text-2xl font-black italic">Tactical AI Suggestions</h3>
-                   <p className="text-[10px] text-secondary/60 uppercase font-black tracking-widest mt-1">Real-time crowd control logic</p>
+                   <h3 className="text-xl md:text-2xl font-black italic font-orbitron">Tactical AI Suggestions</h3>
+                   <p className="text-[9px] md:text-[10px] text-secondary/60 uppercase font-black tracking-widest mt-1">Real-time crowd control logic</p>
                 </div>
              </div>
              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -124,15 +124,15 @@ export const AdminDashboard = () => {
              </div>
           </div>
 
-          <div className="glass-panel p-10 rounded-[3.5rem] border-white/5 shadow-[0_0_100px_rgba(0,194,255,0.05)]">
-            <div className="flex justify-between items-center mb-12">
+          <div className="glass-panel p-6 md:p-10 rounded-[2rem] md:rounded-[3.5rem] border-white/5 shadow-[0_0_100px_rgba(0,194,255,0.05)]">
+            <div className="flex justify-between items-center mb-10 md:mb-12">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
-                   <TrendingUp size={24} />
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20 shrink-0">
+                   <TrendingUp size={20} md:size={24} />
                 </div>
                 <div>
-                   <h3 className="text-2xl font-black">Dynamic Flow Metrics</h3>
-                   <p className="text-[10px] text-white/30 uppercase font-black tracking-widest mt-1">Cross-sector load distribution</p>
+                   <h3 className="text-xl md:text-2xl font-black font-orbitron">Dynamic Flow Metrics</h3>
+                   <p className="text-[9px] md:text-[10px] text-white/30 uppercase font-black tracking-widest mt-1">Cross-sector load distribution</p>
                 </div>
               </div>
             </div>

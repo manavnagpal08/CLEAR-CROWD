@@ -82,30 +82,30 @@ export const SettingsPage = () => {
   ];
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-12 pb-32 relative">
+    <div className="max-w-4xl mx-auto px-4 md:px-6 py-8 md:py-12 pb-32 relative">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex items-center gap-6 mb-12"
+        className="flex flex-col sm:flex-row items-center gap-4 md:gap-6 mb-8 md:mb-12 text-center sm:text-left"
       >
         <div className="relative">
-          <div className="w-24 h-24 rounded-[2rem] glass-panel p-1 border-primary/30 bg-primary/10 relative overflow-hidden group">
+          <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl md:rounded-[2rem] glass-panel p-1 border-primary/30 bg-primary/10 relative overflow-hidden group">
             <div className="absolute inset-0 bg-primary/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
             <img 
               src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name || 'Commander'}&backgroundColor=transparent&flip=true`} 
               alt="User" 
-              className="rounded-[1.8rem] relative z-10" 
+              className="rounded-xl md:rounded-[1.8rem] relative z-10" 
             />
           </div>
-          <div className="absolute -bottom-1 -right-1 w-8 h-8 rounded-xl bg-primary flex items-center justify-center border-4 border-[#04060A] shadow-lg">
-            <Smartphone size={14} className="text-[#04060A]" />
+          <div className="absolute -bottom-1 -right-1 w-6 h-6 md:w-8 md:h-8 rounded-lg md:rounded-xl bg-primary flex items-center justify-center border-2 md:border-4 border-[#04060A] shadow-lg">
+            <Smartphone size={12} md:size={14} className="text-[#04060A]" />
           </div>
         </div>
         <div>
-          <h1 className="text-4xl font-black italic tracking-tight uppercase">Settings</h1>
-          <div className="flex items-center gap-3 mt-1">
-            <span className="text-white/40 font-bold uppercase tracking-widest text-[10px]">Identification: {user?.role || 'Citizen'}</span>
-            <Badge variant={user?.role === 'admin' ? 'danger' : 'success'}>
+          <h1 className="text-3xl md:text-4xl font-black italic tracking-tight uppercase font-orbitron">Settings</h1>
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 md:gap-3 mt-1">
+            <span className="text-white/40 font-bold uppercase tracking-widest text-[9px] md:text-[10px]">Identification: {user?.role || 'Citizen'}</span>
+            <Badge variant={user?.role === 'admin' ? 'danger' : 'success'} className="text-[8px] md:text-[9px]">
                {user?.role === 'admin' ? 'System Admin' : 'Active'}
             </Badge>
           </div>
@@ -126,18 +126,18 @@ export const SettingsPage = () => {
                 <div 
                   key={item.label}
                   onClick={item.onClick}
-                  className="group relative glass-panel p-6 rounded-[2rem] border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer flex items-center justify-between"
+                  className="group relative glass-panel p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer flex items-center justify-between"
                 >
-                  <div className="flex items-center gap-5">
-                    <div className={`w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center ${item.color} group-hover:scale-110 transition-transform`}>
+                  <div className="flex items-center gap-4 md:gap-5">
+                    <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-white/5 flex items-center justify-center ${item.color} group-hover:scale-110 transition-transform shrink-0`}>
                       {item.icon}
                     </div>
-                    <div>
-                      <h4 className="font-bold text-white group-hover:text-primary transition-colors">{item.label}</h4>
-                      <p className="text-xs text-white/30">{item.sub}</p>
+                    <div className="min-w-0 pr-2">
+                      <h4 className="font-bold text-white group-hover:text-primary transition-colors text-sm md:text-base font-orbitron truncate">{item.label}</h4>
+                      <p className="text-[10px] md:text-xs text-white/30 truncate">{item.sub}</p>
                     </div>
                   </div>
-                  <ChevronRight size={18} className="text-white/10 group-hover:text-primary transition-colors" />
+                  <ChevronRight size={16} md:size={18} className="text-white/10 group-hover:text-primary transition-colors shrink-0" />
                 </div>
               ))}
             </div>
@@ -167,7 +167,7 @@ export const SettingsPage = () => {
       {/* Profile Edit Overlay */}
       <AnimatePresence>
         {isEditingProfile && (
-          <div className="fixed inset-0 z-[2000] flex items-center justify-center p-6 sm:p-24">
+          <div className="fixed inset-0 z-[2000] flex items-end sm:items-center justify-center p-0 md:p-24">
             <motion.div 
                initial={{ opacity: 0 }}
                animate={{ opacity: 1 }}
@@ -176,38 +176,38 @@ export const SettingsPage = () => {
                onClick={() => setIsEditingProfile(false)}
             />
             <motion.div 
-               initial={{ scale: 0.9, opacity: 0, y: 20 }}
+               initial={{ scale: 0.9, opacity: 0, y: 100 }}
                animate={{ scale: 1, opacity: 1, y: 0 }}
-               exit={{ scale: 0.9, opacity: 0, y: 20 }}
-               className="w-full max-w-lg glass-panel p-10 rounded-[3.5rem] border-white/10 shadow-[0_50px_100px_rgba(0,0,0,0.8)] relative z-10"
+               exit={{ scale: 0.9, opacity: 0, y: 100 }}
+               className="w-full max-w-lg glass-panel p-8 md:p-10 rounded-t-[2.5rem] md:rounded-[3.5rem] border-white/10 shadow-[0_50px_100px_rgba(0,0,0,0.8)] relative z-10"
             >
-               <div className="flex justify-between items-center mb-8">
-                  <h2 className="text-3xl font-black italic tracking-tight">EDIT PROFILE</h2>
+               <div className="flex justify-between items-center mb-6 md:mb-8">
+                  <h2 className="text-2xl md:text-3xl font-black italic tracking-tight font-orbitron">EDIT PROFILE</h2>
                   <button onClick={() => setIsEditingProfile(false)} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
                     <X size={20} />
                   </button>
                </div>
 
-               <form onSubmit={handleUpdateProfile} className="space-y-6">
+               <form onSubmit={handleUpdateProfile} className="space-y-4 md:space-y-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-2">Public Identification</label>
+                    <label className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-white/30 ml-2">Public Identification</label>
                     <input 
-                      className="w-full h-14 bg-white/5 border border-white/10 rounded-2xl px-6 text-white outline-none focus:border-primary transition-all"
+                      className="w-full h-12 md:h-14 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-4 md:px-6 text-white outline-none focus:border-primary transition-all text-sm md:text-base"
                       value={profileForm.name}
                       onChange={(e) => setProfileForm({...profileForm, name: e.target.value})}
                       required
                     />
                   </div>
                   <div className="space-y-2 pb-4">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-2">Secure Email (Read-only)</label>
+                    <label className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-white/30 ml-2">Secure Email (Read-only)</label>
                     <input 
-                      className="w-full h-14 bg-white/[0.02] border border-white/5 rounded-2xl px-6 text-white/30 outline-none"
+                      className="w-full h-12 md:h-14 bg-white/[0.02] border border-white/5 rounded-xl md:rounded-2xl px-4 md:px-6 text-white/30 outline-none text-sm md:text-base"
                       value={profileForm.email}
                       disabled
                     />
                   </div>
 
-                  <Button size="lg" className="w-full h-16 font-black tracking-widest italic group cyber-glow-blue" isLoading={isLoading}>
+                  <Button size="lg" className="w-full h-14 md:h-16 font-black tracking-widest italic group cyber-glow-blue text-sm md:text-base" isLoading={isLoading}>
                     <Save size={18} className="mr-2 group-hover:scale-110 transition-transform" /> 
                     UPDATE RECORD
                   </Button>

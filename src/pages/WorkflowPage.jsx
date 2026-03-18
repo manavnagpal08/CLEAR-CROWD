@@ -37,7 +37,7 @@ export const WorkflowPage = () => {
     ];
 
     return (
-        <div className="h-full w-full bg-[#080B14] p-10 overflow-y-auto custom-scrollbar relative overflow-hidden">
+        <div className="h-full w-full bg-[#080B14] p-6 md:p-10 overflow-y-auto custom-scrollbar relative overflow-hidden">
             {/* Premium Background Grid */}
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
                  style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '40px 40px' }} />
@@ -47,12 +47,12 @@ export const WorkflowPage = () => {
                 <motion.div 
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mb-20 text-center"
+                    className="mb-12 md:mb-20 text-center"
                 >
-                    <h1 className="text-6xl font-black text-white italic tracking-tighter uppercase mb-4">
+                    <h1 className="text-4xl md:text-6xl font-black text-white italic tracking-tighter uppercase mb-4 font-orbitron">
                         SYSTEM <span className="text-primary not-italic">ARCHITECTURE</span>
                     </h1>
-                    <p className="text-white/40 text-lg font-medium max-w-2xl mx-auto">
+                    <p className="text-white/40 text-sm md:text-lg font-medium max-w-2xl mx-auto px-4">
                         How ClearCrowd transforms raw urban signals into life-saving tactical intelligence.
                     </p>
                 </motion.div>
@@ -71,24 +71,24 @@ export const WorkflowPage = () => {
                                 transition={{ duration: 0.8, delay: i * 0.1 }}
                                 className={`flex flex-col lg:flex-row items-center gap-12 ${i % 2 === 0 ? '' : 'lg:flex-row-reverse'}`}
                             >
-                                <div className="flex-1 text-center lg:text-right">
-                                    <div className={`p-10 rounded-[4rem] glass-panel border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-all group relative overflow-hidden ${i % 2 === 0 ? 'lg:text-right' : 'lg:text-left'}`}>
+                                <div className="flex-1 text-center lg:text-right w-full">
+                                    <div className={`p-6 md:p-10 rounded-[2.5rem] md:rounded-[4rem] glass-panel border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-all group relative overflow-hidden ${i % 2 === 0 ? 'lg:text-right' : 'lg:text-left'}`}>
                                         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity" />
                                         
-                                        <div className={`flex items-center gap-6 mb-4 ${i % 2 === 0 ? 'lg:justify-end' : 'lg:justify-start'} justify-center`}>
-                                            <h3 className="text-3xl font-black italic text-white group-hover:text-primary transition-colors">{step.title}</h3>
-                                            <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:scale-110 transition-transform">
+                                        <div className={`flex flex-col md:flex-row items-center gap-4 md:gap-6 mb-4 ${i % 2 === 0 ? 'lg:justify-end' : 'lg:justify-start'} justify-center`}>
+                                            <h3 className="text-2xl md:text-3xl font-black italic text-white group-hover:text-primary transition-colors font-orbitron">{step.title}</h3>
+                                            <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:scale-110 transition-transform shrink-0">
                                                 {step.icon}
                                             </div>
                                         </div>
                                         
-                                        <p className="text-white/50 text-base leading-relaxed mb-8">
+                                        <p className="text-white/50 text-xs md:text-base leading-relaxed mb-6 md:mb-8">
                                             {step.desc}
                                         </p>
                                         
                                         <div className={`flex flex-wrap gap-2 ${i % 2 === 0 ? 'lg:justify-end' : 'lg:justify-start'} justify-center`}>
                                             {step.tags.map(tag => (
-                                                <span key={tag} className="px-4 py-1.5 rounded-xl bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest text-white/40">
+                                                <span key={tag} className="px-3 py-1 md:px-4 md:py-1.5 rounded-lg md:rounded-xl bg-white/5 border border-white/10 text-[8px] md:text-[10px] font-black uppercase tracking-widest text-white/40">
                                                     {tag}
                                                 </span>
                                             ))}
@@ -112,12 +112,12 @@ export const WorkflowPage = () => {
                 <motion.div 
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
-                    className="mt-32 p-12 rounded-[4rem] glass-panel border-primary/20 bg-primary/5 text-center relative overflow-hidden"
+                    className="mt-20 md:mt-32 p-8 md:p-12 rounded-[2.5rem] md:rounded-[4rem] glass-panel border-primary/20 bg-primary/5 text-center relative overflow-hidden"
                 >
                     <div className="absolute inset-0 bg-primary/5 animate-pulse" />
-                    <Zap className="text-primary mx-auto mb-6" size={48} />
-                    <h2 className="text-4xl font-black italic text-white uppercase mb-4 tracking-tighter">Live Deployment Successful</h2>
-                    <p className="text-white/40 max-w-xl mx-auto font-medium">
+                    <Zap className="text-primary mx-auto mb-6" size={32} md:size={48} />
+                    <h2 className="text-2xl md:text-4xl font-black italic text-white uppercase mb-4 tracking-tighter font-orbitron leading-tight">Live Deployment Successful</h2>
+                    <p className="text-white/40 text-xs md:text-base max-w-xl mx-auto font-medium px-4">
                         ClearCrowd is currently monitoring <span className="text-primary">3 Major Metros</span> with a combined sensor network of over <span className="text-secondary">160+ Tactical Nodes</span>.
                     </p>
                 </motion.div>
