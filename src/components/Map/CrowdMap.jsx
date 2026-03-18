@@ -47,6 +47,7 @@ export const CrowdMap = () => {
   } = useStore();
   const [hoveredLocation, setHoveredLocation] = useState(null);
   const [isCommunityOpen, setIsCommunityOpen] = useState(false);
+  const [mapLayer, setMapLayer] = useState('standard'); // 'standard' | 'heatmap' | 'security'
 
   useEffect(() => {
     updateUserLocation();
@@ -91,6 +92,23 @@ export const CrowdMap = () => {
             url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
             subdomains="abcd"
           />
+          {/* Prediction Mode Selector (Moved for better UX) */}
+          <div className="absolute top-10 left-1/2 -translate-x-1/2 z-[1000] flex gap-3 p-1.5 glass-panel rounded-full border border-white/5 bg-[#0A0F19]/60">
+             {['live', '30m', '60m'].map(mode => (
+               <button 
+                 key={mode}
+                 onClick={() => setViewMode(mode)}
+                 className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
+                   viewMode === mode 
+                    ? 'bg-primary text-slate-950' 
+                    : 'text-white/30 hover:text-white'
+                 }`}
+               >
+                 {mode === 'live' ? 'Dynamic' : mode}
+               </button>
+             ))}
+          </div>
+
           <MapController />
 
           {/* User Marker with Pulse */}
@@ -109,7 +127,11 @@ export const CrowdMap = () => {
 
           {/* Crowd Heatmap Nodes */}
           {/* Crowd Heatmap Nodes */}
-          {crowdData.map((loc) => {
+          {crowdData.filter(loc => {
+            if (mapLayer === 'security') return loc.density > 60 || anomalies.some(a => a.locationId === loc.id);
+            if (mapLayer === 'heatmap') return loc.density > 20;
+            return true;
+          }).map((loc) => {
              const isAnomaly = anomalies.some(a => a.locationId === loc.id);
              return (
                <HeatmapNode 
@@ -117,6 +139,7 @@ export const CrowdMap = () => {
                   location={loc} 
                   isSelected={selectedLocation?.id === loc.id}
                   isAnomaly={isAnomaly}
+                  mapLayer={mapLayer}
                   onClick={() => setSelectedLocation(loc)}
                   onHover={() => setHoveredLocation(loc)}
                   onLeave={() => setHoveredLocation(null)}
@@ -183,22 +206,47 @@ export const CrowdMap = () => {
           animate="visible"
           className="absolute top-10 left-10 z-[1000] space-y-6"
         >
-          <motion.div variants={itemVariants} className="glass-panel p-2 rounded-[1.5rem] flex gap-2 border border-white/10 shadow-2xl bg-[#0A0F19]/40 backdrop-blur-3xl">
-             {['live', '30m', '60m'].map(mode => (
-               <button 
-                 key={mode}
-                 onClick={() => setViewMode(mode)}
-                 className={`px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-500 ${
-                   viewMode === mode 
-                    ? 'bg-primary text-slate-950 shadow-[0_0_20px_rgba(0,194,255,0.4)]' 
-                    : 'text-white/30 hover:text-white hover:bg-white/5'
-                 }`}
-               >
-                 {mode === 'live' ? 'Dynamic' : mode}
-               </button>
-             ))}
+          <motion.div variants={itemVariants} className="glass-panel p-2 rounded-[1.5rem] flex flex-col gap-2 border border-white/10 shadow-2xl bg-[#0A0F19]/40 backdrop-blur-3xl">
+             <span className="text-[8px] font-black text-white/20 uppercase tracking-[0.2em] ml-2 mt-1">Tactical Layers</span>
+             <div className="flex gap-2">
+               {['standard', 'heatmap', 'security'].map(layer => (
+                 <button 
+                   key={layer}
+                   onClick={() => setMapLayer(layer)}
+                   className={`px-4 py-2 rounded-2xl text-[9px] font-black uppercase tracking-tighter transition-all duration-500 flex items-center gap-2 ${
+                     mapLayer === layer 
+                      ? 'bg-secondary text-slate-950 shadow-[0_0_20px_rgba(0,255,156,0.4)]' 
+                      : 'text-white/30 hover:text-white'
+                   }`}
+                 >
+                   {layer === 'standard' && <MapIcon size={12} />}
+                   {layer === 'heatmap' && <Activity size={12} />}
+                   {layer === 'security' && <Shield size={12} />}
+                   {layer}
+                 </button>
+               ))}
+             </div>
           </motion.div>
-          
+
+          <motion.div variants={itemVariants} className="glass-panel p-2 rounded-[1.5rem] flex flex-col gap-2 border border-white/10 shadow-2xl bg-[#0A0F19]/40 backdrop-blur-3xl">
+             <span className="text-[8px] font-black text-white/20 uppercase tracking-[0.2em] ml-2 mt-1">Active Sectors</span>
+             <div className="flex gap-2">
+               {[
+                 { name: 'BLR', lat: 12.9716, lng: 77.5946 },
+                 { name: 'DEL', lat: 28.6139, lng: 77.2090 },
+                 { name: 'PUN', lat: 18.5204, lng: 73.8567 }
+               ].map(city => (
+                 <button 
+                   key={city.name}
+                   onClick={() => useStore.setState({ userLocation: { lat: city.lat, lng: city.lng } })}
+                   className="px-4 py-2 rounded-2xl text-[10px] font-black text-white/40 hover:text-primary hover:bg-primary/10 transition-all border border-transparent hover:border-primary/20"
+                 >
+                   {city.name}
+                 </button>
+               ))}
+             </div>
+          </motion.div>
+
           <motion.button 
             variants={itemVariants}
             onClick={updateUserLocation}
@@ -292,6 +340,50 @@ export const CrowdMap = () => {
            <div className="relative flex flex-col items-end min-w-24">
               <span className="text-[10px] font-black text-white/30 uppercase tracking-widest">Time Prediction</span>
               <span className="text-xl font-black text-white tabular-nums italic">T - {Math.round((100 - historySlider)/2)}<span className="text-primary not-italic font-bold ml-1">M</span></span>
+           </div>
+        </motion.div>
+
+        {/* Tactical Status HUD */}
+        <motion.div 
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="absolute top-40 right-10 z-[1000] space-y-4 hidden xl:block"
+        >
+           <div className="glass-panel p-6 rounded-[2.5rem] border-white/5 bg-[#0A0F19]/60 backdrop-blur-xl w-64">
+              <div className="flex items-center justify-between mb-4">
+                 <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">Neural Health</span>
+                 <Activity size={12} className="text-primary animate-pulse" />
+              </div>
+              <div className="space-y-3">
+                 <div>
+                    <div className="flex justify-between text-[9px] font-black text-white/40 uppercase mb-1">
+                       <span>Grid Stability</span>
+                       <span className="text-primary">99.4%</span>
+                    </div>
+                    <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                       <motion.div initial={{ width: 0 }} animate={{ width: '99.4%' }} className="h-full bg-primary shadow-[0_0_10px_#00C2FF]" />
+                    </div>
+                 </div>
+                 <div>
+                    <div className="flex justify-between text-[9px] font-black text-white/40 uppercase mb-1">
+                       <span>City Sentiment</span>
+                       <span className="text-secondary">Optimal</span>
+                    </div>
+                    <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                       <motion.div initial={{ width: 0 }} animate={{ width: '85%' }} className="h-full bg-secondary shadow-[0_0_10px_#00FF9C]" />
+                    </div>
+                 </div>
+              </div>
+              <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between">
+                 <div className="flex -space-x-2">
+                    {[1,2,3].map(i => (
+                       <div key={i} className="w-5 h-5 rounded-full bg-white/10 border border-[#0A0F19] flex items-center justify-center text-[8px] font-bold text-white/40">
+                          {i}
+                       </div>
+                    ))}
+                 </div>
+                 <span className="text-[8px] font-black text-white/20 uppercase tracking-widest">Global Sync Active</span>
+              </div>
            </div>
         </motion.div>
       </motion.div>
@@ -390,36 +482,42 @@ export const CrowdMap = () => {
   );
 };
 
-const HeatmapNode = React.memo(({ location, onClick, onHover, onLeave, isSelected, isAnomaly }) => {
+const HeatmapNode = React.memo(({ location, onClick, onHover, onLeave, isSelected, isAnomaly, mapLayer }) => {
   const color = 
     location.density > 75 ? '#FF4D4D' : 
     location.density > 45 ? '#FACC15' : 
     '#00FF9C';
 
+  const radius = mapLayer === 'heatmap' ? 25 : (isSelected ? 14 : 10);
+  const opacity = mapLayer === 'heatmap' ? (location.density / 150) + 0.2 : (isSelected ? 0.9 : 0.6);
+
   return (
     <>
-      {isAnomaly && (
-        <CircleMarker
-          center={[location.lat, location.lng]}
-          radius={20}
-          pathOptions={{
-            color: '#FF4D4D',
-            fillColor: '#FF4D4D',
-            fillOpacity: 0.2,
-            weight: 2,
-            dashArray: '5,10',
-            className: 'animate-pulse'
-          }}
-        />
-      )}
+      <AnimatePresence>
+        {(isAnomaly || (mapLayer === 'security' && location.density > 80)) && (
+          <CircleMarker
+            center={[location.lat, location.lng]}
+            radius={radius * 2}
+            pathOptions={{
+              color: '#FF4D4D',
+              fillColor: '#FF4D4D',
+              fillOpacity: 0.1,
+              weight: 1,
+              dashArray: '5,10',
+              className: 'animate-pulse'
+            }}
+          />
+        )}
+      </AnimatePresence>
       <CircleMarker
          center={[location.lat, location.lng]}
-         radius={isSelected ? 14 : 10}
+         radius={radius}
          pathOptions={{ 
            color: isSelected ? '#00C2FF' : (isAnomaly ? '#FF4D4D' : 'transparent'),
            fillColor: color, 
-           fillOpacity: isSelected ? 0.9 : 0.6,
-           weight: isSelected || isAnomaly ? 4 : 0
+           fillOpacity: opacity,
+           weight: isSelected || isAnomaly ? 3 : 0,
+           className: mapLayer === 'heatmap' ? 'blur-[2px]' : ''
          }}
          eventHandlers={{
            click: onClick,
@@ -427,7 +525,15 @@ const HeatmapNode = React.memo(({ location, onClick, onHover, onLeave, isSelecte
            mouseout: onLeave
          }}
       >
-         <Popup>{location.name}: {Math.round(location.density)}% Busy {isAnomaly && '- ANOMALY'} </Popup>
+         <Popup>
+           <div className="p-2 font-orbitron">
+             <h4 className="font-black text-xs uppercase tracking-tighter">{location.name}</h4>
+             <div className="h-1 w-full bg-white/10 rounded-full mt-1 mb-2 overflow-hidden">
+                <div className="h-full bg-primary" style={{ width: `${location.density}%` }} />
+             </div>
+             <p className="text-[10px] font-bold text-white/60">{Math.round(location.density)}% Density Detected</p>
+           </div>
+         </Popup>
       </CircleMarker>
     </>
   );

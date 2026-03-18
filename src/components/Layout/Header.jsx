@@ -61,6 +61,7 @@ export const Header = () => {
           {user?.role === 'admin' && (
             <NavButton active={activeTab === 'admin'} onClick={() => setActiveTab('admin')} icon={<LayoutDashboard size={18} />} label="Tactical" />
           )}
+          <NavButton active={activeTab === 'workflow'} onClick={() => setActiveTab('workflow')} icon={<Zap size={18} />} label="Architecture" />
           <NavButton active={activeTab === 'alerts'} onClick={() => setActiveTab('alerts')} icon={<Bell size={18} />} label="Notifications" />
           
           <div className="h-8 w-px bg-white/10 mx-2" />
@@ -218,6 +219,7 @@ export const Header = () => {
             {[
               { id: 'map', label: 'Tactical Map', icon: <MapIcon /> },
               ...(user?.role === 'admin' ? [{ id: 'admin', label: 'City Intel', icon: <LayoutDashboard /> }] : []),
+              { id: 'workflow', label: 'System Logic', icon: <Zap /> },
               { id: 'alerts', label: 'Active Alerts', icon: <Bell /> }
             ].map((item) => (
               <button 

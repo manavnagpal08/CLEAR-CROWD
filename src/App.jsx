@@ -10,6 +10,7 @@ import { CrowdMap } from './components/Map/CrowdMap';
 import { AdminDashboard } from './components/Dashboard/AdminDashboard';
 import { AlertsView } from './components/Dashboard/AlertsView';
 import { SettingsPage } from './pages/SettingsPage';
+import { WorkflowPage } from './pages/WorkflowPage';
 
 function App() {
   const { isAuthenticated, activeTab, user, initAuth, updateUserLocation } = useStore();
@@ -138,7 +139,7 @@ function App() {
                       <AdminDashboard />
                     </motion.div>
                   )}
-                  {activeTab === 'alerts' && (
+                   {activeTab === 'alerts' && (
                     <motion.div
                       key="alerts-view"
                       initial={{ opacity: 0, y: 50 }}
@@ -147,6 +148,17 @@ function App() {
                       className="h-full w-full overflow-y-auto"
                     >
                       <AlertsView />
+                    </motion.div>
+                  )}
+                  {activeTab === 'workflow' && (
+                    <motion.div
+                      key="workflow-view"
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 1.1 }}
+                      className="h-full w-full overflow-y-auto"
+                    >
+                      <WorkflowPage />
                     </motion.div>
                   )}
                   {activeTab === 'profile' && (
