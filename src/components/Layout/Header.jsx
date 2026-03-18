@@ -32,20 +32,20 @@ export const Header = () => {
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ type: "spring", damping: 20 }}
-          className="flex items-center gap-5 pointer-events-auto group cursor-pointer p-2 glass-panel rounded-[2rem] border-primary/30 bg-[#0A0F19]/60 hover:bg-[#0A0F19]/80 transition-all shadow-3xl cyber-glow-blue"
+          className="flex items-center gap-6 pointer-events-auto group cursor-pointer p-2 pr-6 glass-premium rounded-[2.5rem] border-primary/20 hover:bg-[#0A0F19]/80 transition-all duration-500 hover:shadow-[0_0_50px_rgba(0,194,255,0.2)]"
           onClick={() => setActiveTab('map')}
         >
-          <div className="w-14 h-14 bg-primary rounded-[1.5rem] flex items-center justify-center shadow-[0_0_40px_rgba(0,194,255,0.6)] group-hover:scale-105 transition-all duration-500 relative overflow-hidden">
-            <div className="absolute inset-x-0 h-1.5 bg-white/50 blur-md animate-scanLineMove opacity-40" />
-            <Shield className="text-[#04060A] fill-[#04060A] relative z-10" size={28} />
+          <div className="w-16 h-16 bg-primary rounded-[1.8rem] flex items-center justify-center shadow-[0_0_40px_rgba(0,194,255,0.4)] group-hover:scale-105 transition-all duration-500 relative overflow-hidden">
+            <div className="absolute inset-x-0 h-2 bg-white/40 blur-lg animate-scanLineMove opacity-30" />
+            <Shield className="text-[#020408] fill-[#020408] relative z-10" size={32} />
           </div>
-          <div className="pr-4">
-            <h1 className="text-2xl font-black tracking-tighter text-white uppercase italic glitch-hover font-futuristic">
-               Clear<span className="text-primary not-italic">Crowd</span>
+          <div>
+            <h1 className="text-3xl font-black tracking-tighter text-white uppercase italic font-orbitron leading-none">
+               CLEAR<span className="text-primary not-italic">CROWD</span>
             </h1>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 mt-1">
                <span className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse shadow-[0_0_10px_rgba(0,255,156,0.8)]" />
-               <p className="text-[9px] text-white/30 uppercase font-bold tracking-[0.4em]">Tactical Neural Grid</p>
+               <p className="text-[10px] text-white/30 uppercase font-black tracking-[0.5em]">Neural Grid Active</p>
             </div>
           </div>
         </motion.div>
@@ -55,7 +55,7 @@ export const Header = () => {
           initial={{ opacity: 0, scale: 0.9, y: -20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ type: "spring", damping: 25, delay: 0.2 }}
-          className="hidden lg:flex items-center glass-panel rounded-[2.5rem] p-2 gap-2 pointer-events-auto border-white/10 shadow-[0_30px_70px_rgba(0,0,0,0.6)] border-t-white/20"
+          className="hidden lg:flex items-center glass-premium rounded-[3rem] p-2 gap-2 pointer-events-auto border-white/5 shadow-[0_50px_100px_rgba(0,0,0,0.5)]"
         >
           <NavButton active={activeTab === 'map'} onClick={() => setActiveTab('map')} icon={<MapIcon size={18} />} label="Satellite" />
           {user?.role === 'admin' && (
@@ -64,22 +64,22 @@ export const Header = () => {
           <NavButton active={activeTab === 'workflow'} onClick={() => setActiveTab('workflow')} icon={<Zap size={18} />} label="Architecture" />
           <NavButton active={activeTab === 'alerts'} onClick={() => setActiveTab('alerts')} icon={<Bell size={18} />} label="Notifications" />
           
-          <div className="h-8 w-px bg-white/10 mx-2" />
+          <div className="h-10 w-px bg-white/10 mx-2" />
           
-          <div className="flex gap-4 px-4 py-1">
-             <div className="flex flex-col items-center group cursor-help" title="Overall City Safety Index">
-                <span className="text-[7px] font-black text-white/40 uppercase tracking-widest">Safety Index</span>
-                <div className="flex items-center gap-1.5">
-                   <div className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse" />
-                   <span className="text-xs font-black text-secondary">98.2%</span>
+          <div className="flex gap-6 px-6 py-2">
+             <div className="flex flex-col items-start group cursor-help" title="Overall City Safety Index">
+                <span className="text-[8px] font-black text-white/30 uppercase tracking-[0.2em]">Safety</span>
+                <div className="flex items-center gap-2">
+                   <div className="w-1.5 h-1.5 rounded-full bg-secondary shadow-[0_0_10px_#00FF9C]" />
+                   <span className="text-sm font-black text-secondary italic">98.2%</span>
                 </div>
              </div>
              
-             <div className="flex flex-col items-center group cursor-help" title="IoT Infrastructure Health">
-                <span className="text-[7px] font-black text-white/40 uppercase tracking-widest">Network</span>
-                <div className="flex items-center gap-1.5">
-                   <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                   <span className="text-xs font-black text-primary">Stable</span>
+             <div className="flex flex-col items-start group cursor-help" title="IoT Infrastructure Health">
+                <span className="text-[8px] font-black text-white/30 uppercase tracking-[0.2em]">Network</span>
+                <div className="flex items-center gap-2">
+                   <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_10px_#00C2FF]" />
+                   <span className="text-sm font-black text-primary italic">STABLE</span>
                 </div>
              </div>
           </div>
@@ -90,20 +90,17 @@ export const Header = () => {
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ type: "spring", damping: 20 }}
-          className="flex items-center gap-6 pointer-events-auto glass-panel p-2 pl-6 rounded-[2.5rem] border-white/5 bg-[#0A0F19]/40 shadow-3xl"
+          className="flex items-center gap-6 pointer-events-auto glass-premium p-2 pl-8 rounded-[3rem] border-white/5 shadow-2xl"
         >
-          <div className="flex items-center gap-4 border-r border-white/10 pr-4 mr-2">
-             <div className="flex flex-col items-center">
-                <span className="text-[10px] font-black text-primary uppercase tracking-tighter">Points</span>
-                <span className="text-sm font-black text-white tabular-nums flex items-center gap-1 group/pts font-futuristic">
+          <div className="flex items-center gap-6 border-r border-white/10 pr-6 mr-2">
+             <div className="flex flex-col items-end">
+                <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Neural Power</span>
+                <span className="text-xl font-black text-white tabular-nums flex items-center gap-2 font-orbitron italic">
                    {userPoints}
                    <motion.span 
-                     animate={{ 
-                       rotate: [0, 20, -20, 0],
-                       scale: [1, 1.2, 1] 
-                     }} 
-                     transition={{ repeat: Infinity, duration: 3 }}
-                     className="text-xs"
+                     animate={{ scale: [1, 1.3, 1], filter: ['brightness(1)', 'brightness(1.5)', 'brightness(1)'] }} 
+                     transition={{ repeat: Infinity, duration: 2 }}
+                     className="text-secondary text-sm"
                    >
                      ⚡
                    </motion.span>
@@ -243,21 +240,21 @@ export const Header = () => {
 const NavButton = ({ active, onClick, icon, label }) => (
   <button 
     onClick={onClick}
-    className={`flex items-center gap-4 px-8 py-3.5 rounded-[1.8rem] transition-all duration-700 group relative overflow-hidden ${
+    className={`flex items-center gap-5 px-10 py-4 rounded-[2rem] transition-all duration-700 group relative overflow-hidden border ${
       active 
-        ? 'bg-primary text-[#04060A] shadow-[0_0_40px_rgba(0,194,255,0.4)]' 
-        : 'text-white/30 hover:text-white hover:bg-white/5 border border-transparent'
+        ? 'bg-primary text-[#020408] shadow-[0_0_50px_rgba(0,194,255,0.4)] border-primary' 
+        : 'text-white/20 hover:text-white hover:bg-white/5 border-transparent'
     }`}
   >
     {active && (
       <motion.div 
         layoutId="active-nav-glow"
-        className="absolute inset-0 bg-white/10 animate-pulse-gentle"
+        className="absolute inset-0 bg-white/10 animate-pulse"
       />
     )}
-    <div className={`relative z-10 transition-all duration-500 scale-110 ${active ? 'rotate-[-5deg]' : 'group-hover:rotate-12'}`}>
+    <div className={`relative z-10 transition-all duration-700 ${active ? 'scale-125' : 'group-hover:scale-110 group-hover:rotate-12'}`}>
        {icon}
     </div>
-    <span className="relative z-10 text-xs font-black uppercase tracking-[0.2em] italic pr-2">{label}</span>
+    <span className="relative z-10 text-[11px] font-black uppercase tracking-[0.2em] italic font-orbitron">{label}</span>
   </button>
 );

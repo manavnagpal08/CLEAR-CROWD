@@ -55,168 +55,211 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex bg-[#04060A] overflow-hidden">
-      {/* Dynamic Data Stream Side Panel */}
-      <div className="hidden lg:flex flex-1 relative overflow-hidden bg-primary/[0.02] border-r border-white/5">
-        <div className="absolute inset-0 cyber-grid opacity-20" />
-        <div className="scanline" />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/5" />
+    <div className="min-h-screen flex selection:bg-primary/30 relative overflow-hidden bg-[#020408]">
+      {/* Background Ambience */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-primary/10 blur-[150px] rounded-full animate-float opacity-50" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-secondary/5 blur-[150px] rounded-full animate-float opacity-30" style={{ animationDelay: '3s' }} />
+        <div className="absolute inset-0 cyber-grid opacity-[0.03]" />
+      </div>
+
+      {/* Dynamic Visual Side (Left) */}
+      <div className="hidden lg:flex flex-1 relative overflow-hidden z-10 border-r border-white/5">
+        <div className="absolute inset-0 bg-[#04060A]/40 backdrop-blur-sm" />
+        <div className="scanline opacity-10" />
         
-        <div className="relative z-10 flex flex-col items-center justify-center p-20 text-center w-full">
+        <div className="relative z-20 flex flex-col items-start justify-center p-24 w-full">
           <motion.div 
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: "spring", damping: 15 }}
-            className="w-32 h-32 bg-primary/10 rounded-[2.5rem] flex items-center justify-center mb-10 border border-primary/30 cyber-glow-blue relative"
+            initial={{ scale: 0.8, opacity: 0, rotate: -10 }}
+            animate={{ scale: 1, opacity: 1, rotate: 0 }}
+            className="w-20 h-20 glass-premium rounded-3xl flex items-center justify-center mb-12 border-primary/30 group hover:shadow-[0_0_50px_rgba(0,194,255,0.3)] transition-all duration-700"
           >
-             <div className="absolute inset-0 bg-primary/20 blur-2xl animate-pulse" />
-             <Shield className="text-primary w-14 h-14 relative z-10" />
+             <Shield className="text-primary w-10 h-10 group-hover:scale-110 transition-transform" />
           </motion.div>
           
           <motion.div
-            initial={{ y: 20, opacity: 0 }}
+            initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
+            transition={{ delay: 0.2, type: "spring" }}
+            className="space-y-6"
           >
-            <h1 className="text-6xl font-black mb-4 tracking-tighter italic glitch-hover cursor-default">
-              Clear<span className="text-primary not-italic">Crowd</span>
+            <h1 className="text-8xl font-black mb-2 tracking-tighter italic font-orbitron leading-none">
+              CLEAR<br />
+              <span className="text-primary not-italic text-outline-glow">CROWD</span>
             </h1>
-            <div className="flex items-center justify-center gap-3 mb-8">
-               <span className="h-px w-8 bg-white/10" />
-               <span className="text-[10px] uppercase font-black tracking-[0.5em] text-white/30">AI Crowd Management</span>
-               <span className="h-px w-8 bg-white/10" />
+            
+            <div className="flex items-center gap-4">
+               <div className="h-[2px] w-12 bg-primary rounded-full" />
+               <span className="text-[12px] uppercase font-black tracking-[0.6em] text-white/40">Neural Intelligence v4.0</span>
             </div>
-            <p className="text-lg text-white/40 max-w-sm leading-relaxed font-medium">
-              Real-time crowd monitoring and safety platform for smart cities.
+
+            <p className="text-xl text-white/50 max-w-md leading-relaxed font-medium mt-8">
+              Protecting urban citizens through <span className="text-primary font-black italic">Advanced Predictive Analytics</span> and real-time crowd dynamics monitoring.
             </p>
+
+            <div className="grid grid-cols-2 gap-8 pt-12">
+               <div className="space-y-2 border-l border-white/10 pl-6">
+                  <span className="text-3xl font-black text-white italic">160+</span>
+                  <p className="text-[10px] text-white/20 uppercase font-black tracking-widest">Active Tactical Nodes</p>
+               </div>
+               <div className="space-y-2 border-l border-white/10 pl-6">
+                  <span className="text-3xl font-black text-secondary italic">99.4%</span>
+                  <p className="text-[10px] text-white/20 uppercase font-black tracking-widest">Signal Reliability</p>
+               </div>
+            </div>
           </motion.div>
         </div>
 
-        {/* Floating Data Particles */}
-        <div className="absolute inset-0 pointer-events-none">
-           {[...Array(5)].map((_, i) => (
+        {/* Neural Grid Decoration */}
+        <div className="absolute inset-0 pointer-events-none opacity-20">
+           {[...Array(20)].map((_, i) => (
              <motion.div
                key={i}
-               className="absolute w-1 h-1 bg-primary/20 rounded-full"
+               className="absolute bg-primary/40 rounded-full"
+               style={{ 
+                 width: Math.random() * 4 + 1 + 'px', 
+                 height: Math.random() * 4 + 1 + 'px',
+                 top: Math.random() * 100 + '%',
+                 left: Math.random() * 100 + '%'
+               }}
                animate={{
-                 y: [-20, 800],
-                 x: Math.random() * 800,
-                 opacity: [0, 0.5, 0]
+                 opacity: [0, 1, 0],
+                 scale: [0.5, 1.5, 0.5],
+                 y: [0, -100]
                }}
                transition={{
-                 duration: 4 + Math.random() * 4,
+                 duration: 3 + Math.random() * 5,
                  repeat: Infinity,
-                 delay: i * 2,
-                 ease: "linear"
+                 delay: Math.random() * 5
                }}
              />
            ))}
         </div>
       </div>
 
-      {/* Futuristic Auth Form */}
-      <div className="flex-1 flex flex-col items-center justify-center p-8 lg:p-24 relative overflow-y-auto">
+      {/* Auth Side (Right) */}
+      <div className="flex-1 flex flex-col items-center justify-center p-8 lg:p-24 relative z-20">
+        <div className="absolute inset-0 bg-[#020408]/60 backdrop-blur-xl lg:hidden" />
+        
         <motion.div 
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="w-full max-w-md space-y-12 relative z-10"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="w-full max-w-lg relative z-20"
         >
-          <div className="space-y-4">
-            <Badge variant="info" className="mb-2 py-1 px-4 text-[9px] border-primary/20 bg-primary/5">Secure Connection</Badge>
-            <h2 className="text-5xl font-black tracking-tight uppercase italic">
-              {isLogin ? 'Sign In' : 'Sign Up'}
-            </h2>
-            <p className="text-white/30 font-medium tracking-wide">
-              {isLogin ? 'Welcome back! Please enter your details.' : 'Join ClearCrowd and stay safe today.'}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 gap-4">
-            <button 
-              onClick={handleGoogleSignIn}
-              className="w-full h-16 glass-panel rounded-2xl flex items-center justify-center gap-4 hover:bg-white/10 border border-white/5 transition-all text-sm font-bold group cyber-shimmer"
-            >
-              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pwa/google.svg" alt="Google" className="w-5 h-5 grayscale group-hover:grayscale-0 transition-all" />
-              <span>Continue with Google</span>
-            </button>
-          </div>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/5" /></div>
-            <div className="relative flex justify-center text-[9px] uppercase font-black tracking-[0.4em]">
-              <span className="bg-[#04060A] px-6 text-white/20 italic">OR</span>
-            </div>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <AnimatePresence mode="wait">
-              {!isLogin && (
-                <motion.div
-                  key="name-field"
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  className="overflow-hidden"
-                >
-                  <label className="text-[10px] uppercase font-black text-white/30 mb-2 block tracking-widest px-1">Full Name</label>
-                  <input
-                    placeholder="Enter your name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required={!isLogin}
-                    className="w-full bg-white/[0.03] border border-white/10 rounded-2xl px-6 h-14 text-white outline-none focus:border-primary/50 transition-all"
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            <div>
-              <label className="text-[10px] uppercase font-black text-white/30 mb-2 block tracking-widest px-1">Email Address</label>
-              <input
-                placeholder="your@email.com"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full bg-white/[0.03] border border-white/10 rounded-2xl px-6 h-14 text-white outline-none focus:border-primary/50 transition-all"
-              />
-            </div>
+          <div className="glass-premium p-12 lg:p-16 rounded-[4rem] border-white/5 shadow-[0_50px_100px_rgba(0,0,0,0.8)] cyber-shimmer group relative overflow-hidden">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
             
-            <div>
-              <label className="text-[10px] uppercase font-black text-white/30 mb-2 block tracking-widest px-1">Password</label>
-              <input
-                placeholder="••••••••"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full bg-white/[0.03] border border-white/10 rounded-2xl px-6 h-14 text-white outline-none focus:border-primary/50 transition-all"
-              />
+            <div className="space-y-2 mb-12">
+               <Badge variant="info" className="mb-4 py-1.5 px-6 text-[10px] bg-primary/10 border-primary/20 animate-pulse text-glow">Secure Tactical Authorization</Badge>
+               <h2 className="text-6xl font-black tracking-tighter uppercase italic drop-shadow-2xl">
+                 {isLogin ? 'Access' : 'Deploy'}
+               </h2>
+               <p className="text-white/40 font-medium tracking-tight">
+                 {isLogin ? 'Initialize your neural handshake.' : 'Register your signature to the grid.'}
+               </p>
             </div>
 
-            <Button size="lg" className="w-full h-16 font-black tracking-widest italic group cyber-glow-blue" isLoading={loading} type="submit">
-              {isLogin ? 'SIGN IN' : 'CREATE ACCOUNT'} <ArrowRight size={18} className="ml-2 group-hover:translate-x-2 transition-transform" />
-            </Button>
-          </form>
+            <form onSubmit={handleSubmit} className="space-y-8">
+              <div className="space-y-4">
+                <AnimatePresence mode="wait">
+                  {!isLogin && (
+                    <motion.div
+                      key="name-field"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="space-y-2 overflow-hidden"
+                    >
+                      <label className="text-[10px] uppercase font-black text-white/20 tracking-widest ml-2 italic">Neural Name</label>
+                      <div className="relative group">
+                         <User className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-primary transition-colors" size={18} />
+                         <input
+                           placeholder="Enter Identity"
+                           value={name}
+                           onChange={(e) => setName(e.target.value)}
+                           required={!isLogin}
+                           className="w-full bg-white/[0.03] border border-white/5 rounded-[2rem] pl-16 pr-8 h-16 text-white text-sm font-bold outline-none focus:bg-white/[0.06] focus:border-primary/50 transition-all placeholder:text-white/10"
+                         />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
-          <p className="text-center text-xs text-white/30 font-medium">
-            {isLogin ? "Don't have an account?" : "Already have an account?"}{' '}
-            <button 
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-primary font-bold hover:text-primary transition-colors hover:underline underline-offset-8"
-            >
-              {isLogin ? 'Sign Up' : 'Sign In'}
-            </button>
-          </p>
+                <div className="space-y-2">
+                   <label className="text-[10px] uppercase font-black text-white/20 tracking-widest ml-2 italic">Signal Address</label>
+                   <div className="relative group">
+                      <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-primary transition-colors" size={18} />
+                      <input
+                        placeholder="commander@nexus.grid"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        className="w-full bg-white/[0.03] border border-white/5 rounded-[2rem] pl-16 pr-8 h-16 text-white text-sm font-bold outline-none focus:bg-white/[0.06] focus:border-primary/50 transition-all placeholder:text-white/10"
+                      />
+                   </div>
+                </div>
+                
+                <div className="space-y-2">
+                   <label className="text-[10px] uppercase font-black text-white/20 tracking-widest ml-2 italic">Security Key</label>
+                   <div className="relative group">
+                      <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-primary transition-colors" size={18} />
+                      <input
+                        placeholder="••••••••••••"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        className="w-full bg-white/[0.03] border border-white/5 rounded-[2rem] pl-16 pr-8 h-16 text-white text-sm font-bold outline-none focus:bg-white/[0.06] focus:border-primary/50 transition-all placeholder:text-white/10"
+                      />
+                   </div>
+                </div>
+              </div>
+
+              <div className="pt-4 space-y-6">
+                <Button size="lg" className="w-full h-20 font-black tracking-[0.2em] italic text-md group/btn bg-primary hover:bg-white transition-all shadow-3xl shadow-primary/20 border-none rounded-[2.5rem]" isLoading={loading} type="submit">
+                  <span className="flex items-center gap-3">
+                    {isLogin ? 'INITIALIZE ACCESS' : 'CREATE GRID ID'} 
+                    <ArrowRight size={20} className="group-hover/btn:translate-x-2 transition-transform" />
+                  </span>
+                </Button>
+
+                <div className="flex items-center gap-4">
+                   <div className="h-px flex-1 bg-white/5" />
+                   <span className="text-[9px] font-black text-white/10 uppercase tracking-[0.4em]">Integrated Sign-In</span>
+                   <div className="h-px flex-1 bg-white/5" />
+                </div>
+
+                <div className="grid grid-cols-1 gap-4">
+                  <button 
+                    type="button"
+                    onClick={handleGoogleSignIn}
+                    className="w-full h-16 glass-premium hover:bg-white/5 rounded-3xl border-white/5 text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-4 group transition-all"
+                  >
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pwa/google.svg" alt="Google" className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                    Neural Federated Login
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <div className="mt-12 text-center space-y-4">
+             <p className="text-xs text-white/30 font-medium">
+               {isLogin ? "Neural signature not in grid?" : "Already have a registered ID?"}{' '}
+               <button 
+                 onClick={() => setIsLogin(!isLogin)}
+                 className="text-primary font-black uppercase tracking-widest hover:text-white transition-all ml-2 underline-offset-8 hover:underline"
+               >
+                 {isLogin ? 'Join Network' : 'Identify Self'}
+               </button>
+             </p>
+
+             <p className="text-[10px] text-white/5 uppercase font-black tracking-[0.6em] mt-20">
+               ClearCrowd Autonomous System • Build ID 0x98A1
+             </p>
+          </div>
         </motion.div>
-
-        {/* Fixed Footer Decoration */}
-        <div className="absolute bottom-8 flex flex-col items-center gap-2">
-           <div className="h-1 w-12 bg-primary/20 rounded-full" />
-           <p className="text-[9px] text-white/10 uppercase font-black tracking-[0.5em]">
-             System Core v2.0 • Build ID: RC-8921
-           </p>
-        </div>
       </div>
     </div>
   );

@@ -19,20 +19,27 @@ export const UserInsightsPanel = () => {
     ];
 
     return (
-        <div className="mt-8 border-t border-white/5 pt-6">
-            <div className="flex bg-white/5 rounded-2xl p-1 mb-6 overflow-x-auto no-scrollbar gap-1">
+        <div className="mt-10 pt-10 border-t border-white/10 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-24 h-[1px] bg-primary animate-move-horizontal" />
+            
+            <div className="flex bg-[#0A0F19]/60 p-1.5 rounded-[2.5rem] mb-10 overflow-x-auto no-scrollbar gap-2 border border-white/5 shadow-inner">
                 {tabs.map((tab) => (
                     <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
-                        className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap ${
+                        className={`flex-1 flex flex-col items-center justify-center gap-2 py-4 px-4 rounded-[2rem] text-[9px] font-black uppercase tracking-[0.2em] transition-all duration-500 relative overflow-hidden group ${
                             activeTab === tab.id 
-                                ? 'bg-primary text-slate-950 shadow-lg' 
-                                : 'text-white/40 hover:text-white/60 hover:bg-white/5'
+                                ? 'bg-primary text-[#020408] shadow-[0_0_30px_rgba(0,194,255,0.3)]' 
+                                : 'text-white/20 hover:text-white/60 hover:bg-white/5'
                         }`}
                     >
-                        {tab.icon}
-                        <span className="hidden sm:inline-block">{tab.label.split(' ')[0]}</span>
+                        {activeTab === tab.id && (
+                          <motion.div layoutId="active-insight-tab" className="absolute inset-0 bg-white/10" />
+                        )}
+                        <div className={`relative z-10 transition-transform duration-500 ${activeTab === tab.id ? 'scale-125 rotate-[-10deg]' : 'group-hover:scale-110 group-hover:rotate-12'}`}>
+                          {tab.icon}
+                        </div>
+                        <span className="relative z-10 block font-orbitron text-[8px] tracking-tighter truncate w-full text-center">{tab.label.split(' ')[0]}</span>
                     </button>
                 ))}
             </div>
